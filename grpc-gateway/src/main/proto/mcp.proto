@@ -1,0 +1,21 @@
+syntax = "proto3";
+option java_package = "io.masterkun.mcp.proto";
+option java_outer_classname = "McpProto";
+package io.masterkun.mcp;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  // 字段是否必填
+  optional string field_required = 14192;
+  // 字段说明
+  optional string field_desc = 14193;
+}
+
+extend google.protobuf.MethodOptions {
+  // mcp方法调用名称，如果为空则使用rpc方法名
+  optional string method_name = 14192;
+  // mcp方法说明
+  optional string method_desc = 14193;
+}
+

@@ -1,0 +1,32 @@
+syntax = "proto3";
+option java_package = "io.masterkun.mcp.proto";
+option java_outer_classname = "Example2Proto";
+package io.masterkun.mcp;
+
+import "mcp.proto";
+
+message ToUpperCaseReq {
+  string message = 1 [(mcp.field_desc) = "请求内容"];
+}
+
+message ToUpperCaseRes {
+  string message = 1 [(mcp.field_desc) = "返回结果"];
+}
+
+message ZonedTimeReq {
+  string timezone = 1 [(mcp.field_desc) = "时区编码，例如UTC+8"];
+}
+
+message ZonedTimeRes {
+  string datetime = 1 [(mcp.field_desc) = "当前日期时间，格式为yyyy-MM-dd HH:mm:ss"];
+}
+
+service ExampleService2 {
+  rpc toUpperCache(ToUpperCaseReq) returns (ToUpperCaseRes) {
+    option (mcp.method_desc) = "将字符串内容转换为大写";
+  }
+
+  rpc getTime(ZonedTimeReq) returns (ZonedTimeRes) {
+    option (mcp.method_desc) = "获取指定时区的当前时间";
+  }
+}
