@@ -43,34 +43,7 @@ public class ProtoUtils {
             // Add schema metadata
             schemaNode.put("$schema", "http://json-schema.org/draft-07/schema#");
             schemaNode.put("title", descriptor.getName());
-            schemaNode.put("type", "object");
-
-            // Add properties
-            ObjectNode propertiesNode = objectMapper.createObjectNode();
-            ArrayNode requiredArray = objectMapper.createArrayNode();
-
-            for (Descriptors.FieldDescriptor field : descriptor.getFields()) {
-                // Skip fields that are part of oneof (they will be handled separately)
-                if (field.getContainingOneof() != null) {
-                    continue;
-                }
-
-                addFieldToSchema(field, propertiesNode, requiredArray, objectMapper);
-            }
-
-            // Handle oneof fields
-            for (Descriptors.OneofDescriptor oneof : descriptor.getOneofs()) {
-                for (Descriptors.FieldDescriptor field : oneof.getFields()) {
-                    addFieldToSchema(field, propertiesNode, requiredArray, objectMapper);
-                }
-            }
-
-            schemaNode.set("properties", propertiesNode);
-
-            // Add required fields if any
-            if (!requiredArray.isEmpty()) {
-                schemaNode.set("required", requiredArray);
-            }
+            addMessageToSchema(descriptor, schemaNode, objectMapper);
 
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schemaNode);
         } catch (Exception e) {
@@ -78,9 +51,64 @@ public class ProtoUtils {
         }
     }
 
+    private static void addMessageToSchema(Descriptors.Descriptor descriptor,
+                                           ObjectNode schemaNode,
+                                           ObjectMapper objectMapper) {
+        schemaNode.put("type", "object");
+
+        // Add properties
+        ObjectNode propertiesNode = objectMapper.createObjectNode();
+        ArrayNode requiredArray = objectMapper.createArrayNode();
+
+        for (Descriptors.FieldDescriptor field : descriptor.getFields()) {
+            // Skip fields that are part of oneof (they will be handled separately)
+            if (field.getContainingOneof() != null) {
+                continue;
+            }
+
+            addFieldToSchema(field, propertiesNode, requiredArray, objectMapper, false);
+        }
+
+        // Handle oneof fields
+        ArrayNode allOf = objectMapper.createArrayNode();
+        for (Descriptors.OneofDescriptor oneof : descriptor.getOneofs()) {
+            ArrayNode oneOf = objectMapper.createArrayNode();
+            for (Descriptors.FieldDescriptor field : oneof.getFields()) {
+                addFieldToSchema(field, propertiesNode, requiredArray, objectMapper, true);
+                ArrayNode required = objectMapper.createArrayNode();
+                required.add(field.getName());
+                ObjectNode subNode = objectMapper.createObjectNode();
+                subNode.set("required", required);
+                oneOf.add(subNode);
+            }
+            ObjectNode anyOfNode = objectMapper.createObjectNode();
+            anyOfNode.set("anyOf", oneOf.deepCopy());
+            ObjectNode notNode = objectMapper.createObjectNode();
+            notNode.set("not", anyOfNode);
+            oneOf.add(notNode);
+            allOf.add(oneOf);
+        }
+        if (!allOf.isEmpty()) {
+            if (allOf.size() == 1) {
+                schemaNode.set("oneOf", allOf.get(0));
+            } else {
+                schemaNode.set("allOf", allOf);
+            }
+        }
+
+        schemaNode.set("properties", propertiesNode);
+
+        // Add required fields if any
+        if (!requiredArray.isEmpty()) {
+            schemaNode.set("required", requiredArray);
+        }
+    }
+
     private static void addFieldToSchema(Descriptors.FieldDescriptor field,
                                          ObjectNode propertiesNode,
-                                         ArrayNode requiredArray, ObjectMapper objectMapper) {
+                                         ArrayNode requiredArray,
+                                         ObjectMapper objectMapper,
+                                         boolean isOneOf) {
         ObjectNode fieldNode = objectMapper.createObjectNode();
 
         // Add description if available
@@ -91,7 +119,7 @@ public class ProtoUtils {
 
         // Check if field is required
         if (field.getOptions().hasExtension(McpProto.fieldRequired) &&
-            field.getOptions().getExtension(McpProto.fieldRequired)) {
+            field.getOptions().getExtension(McpProto.fieldRequired) && !isOneOf) {
             requiredArray.add(field.getName());
         }
 
@@ -102,19 +130,7 @@ public class ProtoUtils {
 
             if (field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
                 // For message types, generate a nested schema
-                itemsNode.put("type", "object");
-                ObjectNode nestedPropertiesNode = objectMapper.createObjectNode();
-                ArrayNode nestedRequiredArray = objectMapper.createArrayNode();
-
-                for (Descriptors.FieldDescriptor nestedField : field.getMessageType().getFields()) {
-                    addFieldToSchema(nestedField, nestedPropertiesNode, nestedRequiredArray,
-                            objectMapper);
-                }
-
-                itemsNode.set("properties", nestedPropertiesNode);
-                if (!nestedRequiredArray.isEmpty()) {
-                    itemsNode.set("required", nestedRequiredArray);
-                }
+                addMessageToSchema(field.getMessageType(), itemsNode, objectMapper);
             } else {
                 // For primitive types, set the type of the items
                 updateFieldType(field, itemsNode, objectMapper);
@@ -185,34 +201,7 @@ public class ProtoUtils {
                     fieldNode.set("properties", objectMapper.createObjectNode());
                 } else {
                     // Handle nested message fields
-                    fieldNode.put("type", "object");
-                    ObjectNode nestedPropertiesNode = objectMapper.createObjectNode();
-                    ArrayNode nestedRequiredArray = objectMapper.createArrayNode();
-
-                    for (Descriptors.FieldDescriptor nestedField :
-                            field.getMessageType().getFields()) {
-                        // Skip fields that are part of oneof (they will be handled separately)
-                        if (nestedField.getContainingOneof() != null) {
-                            continue;
-                        }
-
-                        addFieldToSchema(nestedField, nestedPropertiesNode,
-                                nestedRequiredArray, objectMapper);
-                    }
-
-                    // Handle oneof fields in nested messages
-                    for (Descriptors.OneofDescriptor oneof :
-                            field.getMessageType().getOneofs()) {
-                        for (Descriptors.FieldDescriptor nestedField : oneof.getFields()) {
-                            addFieldToSchema(nestedField, nestedPropertiesNode,
-                                    nestedRequiredArray, objectMapper);
-                        }
-                    }
-
-                    fieldNode.set("properties", nestedPropertiesNode);
-                    if (!nestedRequiredArray.isEmpty()) {
-                        fieldNode.set("required", nestedRequiredArray);
-                    }
+                    addMessageToSchema(field.getMessageType(), fieldNode, objectMapper);
                 }
                 break;
             default:

@@ -10,19 +10,19 @@ import "mcp.proto";
 message TestReq {
   string message = 1 [(mcp.field_desc) = "请求内容", (mcp.field_required) = true];
   oneof elem {
-    Elem1 elem1 = 2 [(mcp.field_desc) = "请求元素1"];
-    Elem2 elem2 = 3 [(mcp.field_desc) = "请求元素2"];
+    Elem1 elem1 = 2 [(mcp.field_desc) = "请求元素1", (mcp.field_required) = true];
+    Elem2 elem2 = 3 [(mcp.field_desc) = "请求元素2", (mcp.field_required) = true];
   }
   map<string, int32> map1 = 4 [(mcp.field_desc) = "MAP1"];
   map<int32, bytes> map2 = 5 [(mcp.field_desc) = "MAP2"];
-  repeated string list = 6 [(mcp.field_desc) = "LIST"];
+  repeated string list = 6 [(mcp.field_desc) = "LIST", (mcp.field_required) = true];
   repeated Elem1 elems = 7 [(mcp.field_desc) = "ELEMS"];
 }
 
 message Elem1 {
   int32 a1 = 1 [(mcp.field_desc) = "字段a1"];
   bool a2 = 2 [(mcp.field_desc) = "字段a2"];
-  bytes a3 = 3 [(mcp.field_desc) = "字段a3"];
+  bytes a3 = 3 [(mcp.field_desc) = "字段a3", (mcp.field_required) = true];
 }
 
 message Elem2 {
