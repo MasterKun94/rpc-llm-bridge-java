@@ -1,14 +1,14 @@
 package io.masterkun.ai;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 import io.masterkun.mcp.proto.McpProto;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProtoUtils {
 
@@ -29,84 +29,113 @@ public class ProtoUtils {
     }
 
     /**
-     * Generates a JSON schema representation of a Protocol Buffer message.
+     * Generates a JSON schema representation for the given protobuf descriptor.
      *
-     * @param descriptor The Protocol Buffer message descriptor to generate schema for
-     * @return A JSON string representing the schema of the message
+     * @param descriptor the protobuf descriptor for which the JSON schema is to be generated
+     * @return a string containing the generated JSON schema
+     * @throws RuntimeException if any issue occurs during schema generation
      */
     public static String getJsonSchema(Descriptors.Descriptor descriptor) {
-        if (descriptor == null) {
-            throw new NullPointerException("descriptor cannot be null");
-        }
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode schemaNode = objectMapper.createObjectNode();
 
-        StringBuilder schema = new StringBuilder();
-        schema.append("{\n");
-        schema.append("  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n");
-        schema.append("  \"title\": \"").append(descriptor.getName()).append("\",\n");
-        schema.append("  \"type\": \"object\",\n");
-        schema.append("  \"properties\": {\n");
+            // Add schema metadata
+            schemaNode.put("$schema", "http://json-schema.org/draft-07/schema#");
+            schemaNode.put("title", descriptor.getName());
+            schemaNode.put("type", "object");
 
-        Map<String, String> fieldSchemas = new HashMap<>();
-        // Collect required field names
-        java.util.List<String> requiredFields = new java.util.ArrayList<>();
+            // Add properties
+            ObjectNode propertiesNode = objectMapper.createObjectNode();
+            ArrayNode requiredArray = objectMapper.createArrayNode();
 
-        for (Descriptors.FieldDescriptor field : descriptor.getFields()) {
-            String fieldSchema = generateFieldSchema(field, "    ");
-            fieldSchemas.put(field.getName(), fieldSchema);
+            for (Descriptors.FieldDescriptor field : descriptor.getFields()) {
+                // Skip fields that are part of oneof (they will be handled separately)
+                if (field.getContainingOneof() != null) {
+                    continue;
+                }
 
-            // Check if field is required
-            if (field.getOptions().hasExtension(McpProto.fieldRequired)) {
-                boolean fieldRequired = field.getOptions().getExtension(McpProto.fieldRequired);
-                if (fieldRequired) {
-                    requiredFields.add(field.getName());
+                addFieldToSchema(field, propertiesNode, requiredArray, objectMapper);
+            }
+
+            // Handle oneof fields
+            for (Descriptors.OneofDescriptor oneof : descriptor.getOneofs()) {
+                for (Descriptors.FieldDescriptor field : oneof.getFields()) {
+                    addFieldToSchema(field, propertiesNode, requiredArray, objectMapper);
                 }
             }
-        }
 
-        boolean first = true;
-        for (Map.Entry<String, String> entry : fieldSchemas.entrySet()) {
-            if (!first) {
-                schema.append(",\n");
+            schemaNode.set("properties", propertiesNode);
+
+            // Add required fields if any
+            if (!requiredArray.isEmpty()) {
+                schemaNode.set("required", requiredArray);
             }
-            first = false;
-            schema.append("    \"").append(entry.getKey()).append("\": ").append(entry.getValue());
+
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schemaNode);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate JSON schema", e);
         }
-
-        schema.append("\n  }");
-
-        // Add required fields array if there are any required fields
-        if (!requiredFields.isEmpty()) {
-            schema.append(",\n  \"required\": [");
-            first = true;
-            for (String requiredField : requiredFields) {
-                if (!first) {
-                    schema.append(", ");
-                }
-                first = false;
-                schema.append("\"").append(requiredField).append("\"");
-            }
-            schema.append("]");
-        }
-
-        schema.append("\n}");
-
-        return schema.toString();
     }
 
-    private static String generateFieldSchema(Descriptors.FieldDescriptor field, String indent) {
-        StringBuilder fieldSchema = new StringBuilder();
-        fieldSchema.append("{\n");
+    private static void addFieldToSchema(Descriptors.FieldDescriptor field,
+                                         ObjectNode propertiesNode,
+                                         ArrayNode requiredArray, ObjectMapper objectMapper) {
+        ObjectNode fieldNode = objectMapper.createObjectNode();
 
         // Add description if available
         if (field.getOptions().hasExtension(McpProto.fieldDesc)) {
             String description = field.getOptions().getExtension(McpProto.fieldDesc);
-            fieldSchema.append(indent).append("  \"description\": \"").append(description).append("\",\n");
+            fieldNode.put("description", description);
         }
 
-        // Handle different field types
+        // Check if field is required
+        if (field.getOptions().hasExtension(McpProto.fieldRequired) &&
+            field.getOptions().getExtension(McpProto.fieldRequired)) {
+            requiredArray.add(field.getName());
+        }
+
+        // Handle repeated fields (except for map fields which are handled separately)
+        if (field.isRepeated() && !field.isMapField()) {
+            fieldNode.put("type", "array");
+            ObjectNode itemsNode = objectMapper.createObjectNode();
+
+            if (field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
+                // For message types, generate a nested schema
+                itemsNode.put("type", "object");
+                ObjectNode nestedPropertiesNode = objectMapper.createObjectNode();
+                ArrayNode nestedRequiredArray = objectMapper.createArrayNode();
+
+                for (Descriptors.FieldDescriptor nestedField : field.getMessageType().getFields()) {
+                    addFieldToSchema(nestedField, nestedPropertiesNode, nestedRequiredArray,
+                            objectMapper);
+                }
+
+                itemsNode.set("properties", nestedPropertiesNode);
+                if (!nestedRequiredArray.isEmpty()) {
+                    itemsNode.set("required", nestedRequiredArray);
+                }
+            } else {
+                // For primitive types, set the type of the items
+                updateFieldType(field, itemsNode, objectMapper);
+            }
+            fieldNode.set("items", itemsNode);
+        } else {
+            // Handle non-repeated fields
+            updateFieldType(field, fieldNode, objectMapper);
+        }
+
+        propertiesNode.set(field.getName(), fieldNode);
+    }
+
+    private static void updateFieldType(Descriptors.FieldDescriptor field, ObjectNode fieldNode,
+                                        ObjectMapper objectMapper) {
         switch (field.getType()) {
             case STRING:
-                fieldSchema.append(indent).append("  \"type\": \"string\"");
+                fieldNode.put("type", "string");
+                break;
+            case BOOL:
+                fieldNode.put("type", "boolean");
                 break;
             case INT32:
             case INT64:
@@ -118,80 +147,76 @@ public class ProtoUtils {
             case FIXED64:
             case SFIXED32:
             case SFIXED64:
-                fieldSchema.append(indent).append("  \"type\": \"integer\"");
+                fieldNode.put("type", "integer");
                 break;
             case FLOAT:
             case DOUBLE:
-                fieldSchema.append(indent).append("  \"type\": \"number\"");
+                fieldNode.put("type", "number");
                 break;
-            case BOOL:
-                fieldSchema.append(indent).append("  \"type\": \"boolean\"");
+            case BYTES:
+                fieldNode.put("type", "string");
+                fieldNode.put("format", "byte");
+                if (fieldNode.has("description")) {
+                    fieldNode.put("description", fieldNode.get("description").asText() + " " +
+                                                 "(Base64 encoded binary data)");
+                } else {
+                    fieldNode.put("description", "Base64 encoded binary data");
+                }
                 break;
             case ENUM:
-                fieldSchema.append(indent).append("  \"type\": \"string\",\n");
-                fieldSchema.append(indent).append("  \"enum\": [");
-
-                Descriptors.EnumDescriptor enumDescriptor = field.getEnumType();
-                boolean firstEnum = true;
-                for (Descriptors.EnumValueDescriptor value : enumDescriptor.getValues()) {
-                    if (!firstEnum) {
-                        fieldSchema.append(", ");
-                    }
-                    firstEnum = false;
-                    fieldSchema.append("\"").append(value.getName()).append("\"");
+                fieldNode.put("type", "string");
+                ArrayNode enumValues = objectMapper.createArrayNode();
+                for (Descriptors.EnumValueDescriptor value : field.getEnumType().getValues()) {
+                    enumValues.add(value.getName());
                 }
-
-                fieldSchema.append("]");
+                fieldNode.set("enum", enumValues);
                 break;
             case MESSAGE:
-                fieldSchema.append(indent).append("  \"type\": \"object\",\n");
-                fieldSchema.append(indent).append("  \"properties\": {\n");
+                if (field.isMapField()) {
+                    // Handle map fields
+                    fieldNode.put("type", "object");
 
-                Descriptors.Descriptor messageDescriptor = field.getMessageType();
-                Map<String, String> nestedFieldSchemas = new HashMap<>();
+                    // Value property
+                    ObjectNode valueNode = objectMapper.createObjectNode();
+                    Descriptors.FieldDescriptor valueField =
+                            field.getMessageType().findFieldByName("value");
+                    updateFieldType(valueField, valueNode, objectMapper);
+                    fieldNode.set("additionalProperties", valueNode);
+                    fieldNode.set("properties", objectMapper.createObjectNode());
+                } else {
+                    // Handle nested message fields
+                    fieldNode.put("type", "object");
+                    ObjectNode nestedPropertiesNode = objectMapper.createObjectNode();
+                    ArrayNode nestedRequiredArray = objectMapper.createArrayNode();
 
-                for (Descriptors.FieldDescriptor nestedField : messageDescriptor.getFields()) {
-                    String nestedFieldSchema = generateFieldSchema(nestedField, indent + "    ");
-                    nestedFieldSchemas.put(nestedField.getName(), nestedFieldSchema);
-                }
+                    for (Descriptors.FieldDescriptor nestedField :
+                            field.getMessageType().getFields()) {
+                        // Skip fields that are part of oneof (they will be handled separately)
+                        if (nestedField.getContainingOneof() != null) {
+                            continue;
+                        }
 
-                boolean firstNested = true;
-                for (Map.Entry<String, String> entry : nestedFieldSchemas.entrySet()) {
-                    if (!firstNested) {
-                        fieldSchema.append(",\n");
+                        addFieldToSchema(nestedField, nestedPropertiesNode,
+                                nestedRequiredArray, objectMapper);
                     }
-                    firstNested = false;
-                    fieldSchema.append(indent).append("    \"").append(entry.getKey()).append(
-                            "\": ").append(entry.getValue());
-                }
 
-                fieldSchema.append("\n").append(indent).append("  }");
+                    // Handle oneof fields in nested messages
+                    for (Descriptors.OneofDescriptor oneof :
+                            field.getMessageType().getOneofs()) {
+                        for (Descriptors.FieldDescriptor nestedField : oneof.getFields()) {
+                            addFieldToSchema(nestedField, nestedPropertiesNode,
+                                    nestedRequiredArray, objectMapper);
+                        }
+                    }
+
+                    fieldNode.set("properties", nestedPropertiesNode);
+                    if (!nestedRequiredArray.isEmpty()) {
+                        fieldNode.set("required", nestedRequiredArray);
+                    }
+                }
                 break;
             default:
-                fieldSchema.append(indent).append("  \"type\": \"string\"");
-                break;
+                fieldNode.put("type", "string");
         }
-
-        // Handle repeated fields
-        if (field.isRepeated()) {
-            // Save the current schema as the items schema
-            String itemsSchema = fieldSchema.toString();
-            // Remove the opening and closing braces
-            itemsSchema = itemsSchema.substring(itemsSchema.indexOf("{") + 1,
-                    itemsSchema.lastIndexOf("}"));
-
-            // Create a new schema for the array
-            fieldSchema = new StringBuilder();
-            fieldSchema.append("{\n");
-            if (field.getOptions().hasExtension(McpProto.fieldDesc)) {
-                String description = field.getOptions().getExtension(McpProto.fieldDesc);
-                fieldSchema.append(indent).append("  \"description\": \"").append(description).append("\",\n");
-            }
-            fieldSchema.append(indent).append("  \"type\": \"array\",\n");
-            fieldSchema.append(indent).append("  \"items\": {").append(itemsSchema).append("}");
-        }
-
-        fieldSchema.append("\n").append(indent).append("}");
-        return fieldSchema.toString();
     }
 }

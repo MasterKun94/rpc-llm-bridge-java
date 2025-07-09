@@ -76,6 +76,19 @@
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>com.github.victools</groupId>
+                <artifactId>jsonschema-generator-bom</artifactId>
+                <version>4.38.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.github.java-json-tools</groupId>
+                <artifactId>json-schema-validator</artifactId>
+                <version>2.2.14</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
                 <version>2.9.0</version>
