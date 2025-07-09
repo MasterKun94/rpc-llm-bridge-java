@@ -7,7 +7,7 @@ import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.FieldOptions {
   // 字段是否必填
-  optional string field_required = 14192;
+  optional bool field_required = 14192;
   // 字段说明
   optional string field_desc = 14193;
 }

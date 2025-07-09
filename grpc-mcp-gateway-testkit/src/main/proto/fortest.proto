@@ -1,0 +1,45 @@
+syntax = "proto3";
+option java_package = "io.masterkun.mcp.proto";
+option java_outer_classname = "ForTestProto";
+package io.masterkun.mcp;
+
+import "mcp.proto";
+
+message TestReq {
+  string message = 1 [(mcp.field_desc) = "请求内容", (mcp.field_required) = true];
+  oneof elem {
+    Elem1 elem1 = 2 [(mcp.field_desc) = "请求元素1"];
+    Elem2 elem2 = 3 [(mcp.field_desc) = "请求元素2"];
+  }
+  map<string, int32> map1 = 4;
+  map<int32, bytes> map2 = 5;
+}
+
+message Elem1 {
+  int32 a1 = 1 [(mcp.field_desc) = "字段a1"];
+  bool a2 = 2 [(mcp.field_desc) = "字段a2"];
+  bytes a3 = 3 [(mcp.field_desc) = "字段a3"];
+}
+
+message Elem2 {
+  int32 b1 = 1 [(mcp.field_desc) = "字段b1"];
+  bool b2 = 2 [(mcp.field_desc) = "字段b2"];
+  bytes b3 = 3 [(mcp.field_desc) = "字段b3"];
+}
+
+message TestRes {
+  string message = 1 [(mcp.field_desc) = "返回结果"];
+  oneof elem {
+    Elem1 elem1 = 2 [(mcp.field_desc) = "返回元素1"];
+    Elem2 elem2 = 3 [(mcp.field_desc) = "返回元素2"];
+  }
+}
+
+
+service ForTestService {
+
+
+  rpc testGet(TestReq) returns (TestRes) {
+    option (mcp.method_desc) = "测试方法";
+  }
+}

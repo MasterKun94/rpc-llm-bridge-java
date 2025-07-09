@@ -1,53 +1,51 @@
 package io.masterkun.ai;
 
 import com.google.protobuf.Descriptors;
-import com.google.protobuf.Message;
-import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
 import io.masterkun.mcp.proto.McpProto;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProtoUtils {
-    public static String proto2json(Message message) {
-        if (message == null) {
-            return "";
-        }
+
+    public static String toJson(MessageOrBuilder message) {
         try {
             return JsonFormat.printer().print(message);
         } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException("Failed to convert protobuf message to JSON", e);
+            throw new RuntimeException(e);
         }
     }
 
-    public static void json2proto(String json, Message.Builder builder) {
+    public static void fromJson(String json, Message.Builder builder) {
         try {
-            JsonFormat.parser().merge(json, builder);
+            JsonFormat.parser().ignoringUnknownFields().merge(json, builder);
         } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException("Failed to convert JSON to protobuf message", e);
+            throw new RuntimeException(e);
         }
     }
 
     /**
      * Generates a JSON schema representation of a Protocol Buffer message.
      *
-     * @param message The Protocol Buffer message to generate schema for
+     * @param descriptor The Protocol Buffer message descriptor to generate schema for
      * @return A JSON string representing the schema of the message
      */
-    public static String getJsonSchema(Message message) {
-        if (message == null) {
-            return "{}";
+    public static String getJsonSchema(Descriptors.Descriptor descriptor) {
+        if (descriptor == null) {
+            throw new NullPointerException("descriptor cannot be null");
         }
 
         StringBuilder schema = new StringBuilder();
         schema.append("{\n");
         schema.append("  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n");
-        schema.append("  \"title\": \"").append(message.getDescriptorForType().getName()).append("\",\n");
+        schema.append("  \"title\": \"").append(descriptor.getName()).append("\",\n");
         schema.append("  \"type\": \"object\",\n");
         schema.append("  \"properties\": {\n");
 
-        Descriptors.Descriptor descriptor = message.getDescriptorForType();
         Map<String, String> fieldSchemas = new HashMap<>();
         // Collect required field names
         java.util.List<String> requiredFields = new java.util.ArrayList<>();
@@ -57,10 +55,9 @@ public class ProtoUtils {
             fieldSchemas.put(field.getName(), fieldSchema);
 
             // Check if field is required
-            if (field.getOptions().hasExtension(McpProto.fieldName)) {
-                String fieldRequired = field.getOptions().getExtension(McpProto.fieldName);
-                if (fieldRequired != null && !fieldRequired.isEmpty() &&
-                    (fieldRequired.equalsIgnoreCase("true") || fieldRequired.equals("1"))) {
+            if (field.getOptions().hasExtension(McpProto.fieldRequired)) {
+                boolean fieldRequired = field.getOptions().getExtension(McpProto.fieldRequired);
+                if (fieldRequired) {
                     requiredFields.add(field.getName());
                 }
             }
@@ -164,7 +161,8 @@ public class ProtoUtils {
                         fieldSchema.append(",\n");
                     }
                     firstNested = false;
-                    fieldSchema.append(indent).append("    \"").append(entry.getKey()).append("\": ").append(entry.getValue());
+                    fieldSchema.append(indent).append("    \"").append(entry.getKey()).append(
+                            "\": ").append(entry.getValue());
                 }
 
                 fieldSchema.append("\n").append(indent).append("  }");
@@ -179,7 +177,8 @@ public class ProtoUtils {
             // Save the current schema as the items schema
             String itemsSchema = fieldSchema.toString();
             // Remove the opening and closing braces
-            itemsSchema = itemsSchema.substring(itemsSchema.indexOf("{") + 1, itemsSchema.lastIndexOf("}"));
+            itemsSchema = itemsSchema.substring(itemsSchema.indexOf("{") + 1,
+                    itemsSchema.lastIndexOf("}"));
 
             // Create a new schema for the array
             fieldSchema = new StringBuilder();

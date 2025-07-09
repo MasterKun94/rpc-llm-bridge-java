@@ -6,7 +6,7 @@ package io.masterkun.mcp;
 import "mcp.proto";
 
 message ToUpperCaseReq {
-  string message = 1 [(mcp.field_desc) = "请求内容", (mcp.field_required) = "true"];
+  string message = 1 [(mcp.field_desc) = "请求内容", (mcp.field_required) = true];
 }
 
 message ToUpperCaseRes {
