@@ -10,8 +10,7 @@ public class GrpcBridgeToolDefinition<T extends Message> implements BridgeToolDe
     private final String name;
     private final String description;
 
-    private GrpcBridgeToolDefinition(MethodDescriptor<?, T> method, String name,
-                                     String description) {
+    private GrpcBridgeToolDefinition(MethodDescriptor<?, T> method, String name, String description) {
         this.method = method;
         this.name = name;
         this.description = description;
