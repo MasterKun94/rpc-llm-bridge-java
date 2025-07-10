@@ -15,6 +15,12 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Spring Boot auto-configuration class for MCP bridge tools.
+ * This class automatically detects and registers BridgeToolCallback instances
+ * as Spring AI ToolCallback objects, enabling seamless integration between
+ * the MCP bridge framework and Spring AI.
+ */
 @Configuration(proxyBeanMethods = false)
 public class BridgeToolCallbackAutoConfigure implements InitializingBean {
     private static final Logger LOG =
@@ -22,6 +28,11 @@ public class BridgeToolCallbackAutoConfigure implements InitializingBean {
 
     private final ApplicationContext context;
 
+    /**
+     * Constructs a BridgeToolCallbackAutoConfigure with the specified application context.
+     *
+     * @param context The Spring application context
+     */
     @Autowired
     public BridgeToolCallbackAutoConfigure(ApplicationContext context) {
         this.context = context;
@@ -32,6 +43,13 @@ public class BridgeToolCallbackAutoConfigure implements InitializingBean {
 
     }
 
+    /**
+     * Creates a ToolCallbackProvider that contains all BridgeToolCallback instances
+     * found in the application context.
+     * This bean is only created when the 'mcp-bridge.auto-detect.enabled' property is set to 'true'.
+     *
+     * @return A ToolCallbackProvider containing proxied BridgeToolCallback instances
+     */
     @Bean
     @ConditionalOnProperty(name = "mcp-bridge.auto-detect.enabled", havingValue = "true")
     public ToolCallbackProvider bridgeToolCallbackProvider() {

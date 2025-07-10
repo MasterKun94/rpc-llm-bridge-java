@@ -17,8 +17,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Utility class for working with Protocol Buffer messages.
+ * Provides methods for converting protobuf messages to/from JSON,
+ * generating JSON schemas for protobuf descriptors, and formatting
+ * protobuf messages as human-readable strings.
+ */
 public class ProtoUtils {
 
+    /**
+     * Converts a protobuf message to its JSON representation.
+     *
+     * @param message The protobuf message to convert
+     * @return A JSON string representation of the message
+     * @throws RuntimeException if the conversion fails
+     */
     public static String toJson(MessageOrBuilder message) {
         try {
             return JsonFormat.printer().print(message);
@@ -27,6 +40,14 @@ public class ProtoUtils {
         }
     }
 
+    /**
+     * Parses a JSON string into a protobuf message builder.
+     * Unknown fields in the JSON are ignored during parsing.
+     *
+     * @param json The JSON string to parse
+     * @param builder The protobuf message builder to populate
+     * @throws RuntimeException if the parsing fails
+     */
     public static void fromJson(String json, Message.Builder builder) {
         try {
             JsonFormat.parser().ignoringUnknownFields().merge(json, builder);
@@ -210,6 +231,14 @@ public class ProtoUtils {
         }
     }
 
+    /**
+     * Formats a protobuf message as a human-readable string.
+     * The format is optimized for readability, with nested messages and repeated fields
+     * properly indented and structured.
+     *
+     * @param message The protobuf message to format
+     * @return A formatted string representation of the message
+     */
     public static String formatString(MessageOrBuilder message) {
         StringBuilder builder = new StringBuilder();
         List<Integer> list = new ArrayList<>();
@@ -227,6 +256,12 @@ public class ProtoUtils {
         return builder.toString();
     }
 
+    /**
+     * Determines if a field is composite (message type or repeated).
+     *
+     * @param field The field descriptor to check
+     * @return true if the field is a message type or repeated, false otherwise
+     */
     private static boolean isFieldComposite(Descriptors.FieldDescriptor field) {
         return field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE || field.isRepeated();
     }

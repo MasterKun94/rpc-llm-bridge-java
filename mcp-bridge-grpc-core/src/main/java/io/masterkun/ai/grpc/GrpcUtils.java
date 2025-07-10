@@ -7,24 +7,54 @@ import io.masterkun.mcp.proto.McpProto;
 
 import javax.annotation.Nullable;
 
+/**
+ * Utility class for working with gRPC method descriptors.
+ * Provides methods to extract information from gRPC method descriptors,
+ * such as input/output descriptors, method names, descriptions, and schemas.
+ */
 public class GrpcUtils {
 
+    /**
+     * Gets the input message descriptor for a gRPC method.
+     *
+     * @param method The gRPC method descriptor
+     * @return The descriptor for the input message type
+     */
     public static Descriptors.Descriptor getInputDescriptor(MethodDescriptor<?, ?> method) {
         Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return descriptor.getInputType();
     }
 
+    /**
+     * Gets the output message descriptor for a gRPC method.
+     *
+     * @param method The gRPC method descriptor
+     * @return The descriptor for the output message type
+     */
     public static Descriptors.Descriptor getOutputDescriptor(MethodDescriptor<?, ?> method) {
         Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return descriptor.getOutputType();
     }
 
+    /**
+     * Gets the description of a gRPC method.
+     *
+     * @param method The gRPC method descriptor
+     * @return The method description, or null if not specified
+     */
     @Nullable
     public static String getMethodDesc(MethodDescriptor<?, ?> method) {
         Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getMethodDesc(descriptor);
     }
 
+    /**
+     * Gets the description of a protobuf method.
+     * The description is extracted from the method options extension.
+     *
+     * @param descriptor The protobuf method descriptor
+     * @return The method description, or null if not specified
+     */
     @Nullable
     public static String getMethodDesc(Descriptors.MethodDescriptor descriptor) {
         if (descriptor.getOptions().hasExtension(McpProto.methodDesc)) {
@@ -33,11 +63,25 @@ public class GrpcUtils {
         return null;
     }
 
+    /**
+     * Gets the name of a gRPC method.
+     *
+     * @param method The gRPC method descriptor
+     * @return The method name
+     */
     public static String getMethodName(MethodDescriptor<?, ?> method) {
         Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getMethodName(descriptor);
     }
 
+    /**
+     * Gets the name of a protobuf method.
+     * The name is extracted from the method options extension if available,
+     * otherwise it's constructed from the service name and method name.
+     *
+     * @param descriptor The protobuf method descriptor
+     * @return The method name
+     */
     public static String getMethodName(Descriptors.MethodDescriptor descriptor) {
         if (descriptor.getOptions().hasExtension(McpProto.methodName)) {
             return descriptor.getOptions().getExtension(McpProto.methodName);
@@ -45,24 +89,55 @@ public class GrpcUtils {
         return descriptor.getService().getName() + "." + descriptor.getName();
     }
 
+    /**
+     * Gets the JSON schema for the input message of a gRPC method.
+     *
+     * @param method The gRPC method descriptor
+     * @return The JSON schema for the input message
+     */
     public static String getInputSchema(MethodDescriptor<?, ?> method) {
         Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getInputSchema(descriptor);
     }
 
+    /**
+     * Gets the JSON schema for the input message of a protobuf method.
+     *
+     * @param descriptor The protobuf method descriptor
+     * @return The JSON schema for the input message
+     */
     public static String getInputSchema(Descriptors.MethodDescriptor descriptor) {
         return ProtoUtils.getJsonSchema(descriptor.getInputType());
     }
 
+    /**
+     * Gets the JSON schema for the output message of a gRPC method.
+     *
+     * @param method The gRPC method descriptor
+     * @return The JSON schema for the output message
+     */
     public static String getOutputSchema(MethodDescriptor<?, ?> method) {
         Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getOutputSchema(descriptor);
     }
 
+    /**
+     * Gets the JSON schema for the output message of a protobuf method.
+     *
+     * @param descriptor The protobuf method descriptor
+     * @return The JSON schema for the output message
+     */
     public static String getOutputSchema(Descriptors.MethodDescriptor descriptor) {
         return ProtoUtils.getJsonSchema(descriptor.getOutputType());
     }
 
+    /**
+     * Converts a gRPC method descriptor to a protobuf method descriptor.
+     *
+     * @param method The gRPC method descriptor
+     * @return The corresponding protobuf method descriptor
+     * @throws IllegalArgumentException if the schema descriptor is not a ProtoMethodDescriptorSupplier
+     */
     public static Descriptors.MethodDescriptor getProtoMethod(MethodDescriptor<?, ?> method) {
         Object obj = method.getSchemaDescriptor();
         if (!(obj instanceof ProtoMethodDescriptorSupplier)) {
