@@ -10,7 +10,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>example-grpc-gateway-springboot</artifactId>
+    <artifactId>example-grpc-bridge-springboot</artifactId>
 
     <dependencies>
         <dependency>

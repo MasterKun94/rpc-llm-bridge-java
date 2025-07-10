@@ -14,49 +14,63 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+/**
+ * REST controller that provides an endpoint for interacting with an AI model.
+ * This controller demonstrates how to use the MCP client to communicate with the AI model
+ * and how to configure the ChatClient with various options.
+ */
 @RestController
 @RequestMapping("/client")
 public class Controller {
-
-
-    private static final String DEFAULT_PROMPT = "你好，介绍下你自己！";
 
     private final ChatClient chatClient;
 
     private final ChatModel chatModel;
 
+    /**
+     * Constructor that configures the ChatClient with various options.
+     *
+     * @param chatModel The AI chat model to use
+     * @param tools The tool callbacks provider for MCP tools
+     */
     public Controller(ChatModel chatModel, ToolCallbackProvider tools) {
 
         this.chatModel = chatModel;
 
-        // 构造时，可以设置 ChatClient 的参数
-        // {@link org.springframework.ai.chat.client.ChatClient};
+        // Configure the ChatClient with various options
         this.chatClient = ChatClient.builder(chatModel)
-                // 实现 Chat Memory 的 Advisor
-                // 在使用 Chat Memory 时，需要指定对话 ID，以便 Spring AI 处理上下文。
+                // Add chat memory advisor for maintaining conversation context
                 .defaultAdvisors(
                         MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build()
                 )
-                // 实现 Logger 的 Advisor
+                // Add logger advisor for logging
                 .defaultAdvisors(
                         new SimpleLoggerAdvisor()
                 )
-                // 设置 ChatClient 中 ChatModel 的 Options 参数
+                // Configure chat model options
                 .defaultOptions(
                         DashScopeChatOptions.builder()
                                 .withTopP(0.7)
-                                // 设置enable_thinking 为 true，启用思考过程
+                                // Enable thinking process
                                 .withEnableThinking(true)
                                 .build()
                 )
+                // Register MCP tool callbacks
                 .defaultToolCallbacks(tools)
                 .build();
     }
 
+    /**
+     * Endpoint for streaming chat responses from the AI model.
+     *
+     * @param query The user's query to send to the AI model
+     * @param response The HTTP response object
+     * @return A stream of text responses from the AI model
+     */
     @GetMapping("/stream/chat")
     public Flux<String> streamChat(@RequestParam("query") String query,
                                    HttpServletResponse response) {
-        // 避免返回乱码
+        // Set character encoding to avoid garbled text
         response.setCharacterEncoding("UTF-8");
         return chatClient.prompt(query)
                 .stream()

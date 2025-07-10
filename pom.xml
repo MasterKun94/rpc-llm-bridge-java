@@ -14,7 +14,7 @@
         <module>mcp-bridge-grpc-testkit</module>
         <module>mcp-bridge-grpc-core</module>
         <module>example/example-grpc-service</module>
-        <module>example/example-grpc-gateway-springboot</module>
+        <module>example/example-grpc-bridge-springboot</module>
         <module>example/example-client-springboot</module>
     </modules>
 

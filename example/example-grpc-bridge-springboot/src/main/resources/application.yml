@@ -1,0 +1,11 @@
+# Configuration for the MCP Gateway application
+server:
+  port: 8081
+
+# MCP server configuration
+spring.ai.mcp.server:
+  name: gateway-server  # Name of the MCP server
+  version: 1.0.0  # Version of the MCP server
+
+# Enable automatic detection of gRPC services
+mcp-bridge.auto-detect.enabled: true

@@ -1,3 +1,4 @@
+# Configuration for the MCP client application
 server:
   port: 8888
   servlet:
@@ -8,22 +9,14 @@ server:
 
 spring:
   application:
-    name: mcp
+    name: mcp  # Application name
   ai:
     dashscope:
-      api-key: "sk-7dee538ba48d48c29ecd0d6a6c50991c"
+      api-key: ${DASHSCOPE_API_KEY}  # API key for DashScope AI service
     mcp.client:
-      toolcallback.enabled: true
+      toolcallback.enabled: true  # Enable MCP tool callbacks
       sse.connections:
         gateway-server:
-          url: http://localhost:8081
+          url: http://localhost:8081  # URL of the MCP Gateway server
   mandatory-file-encoding: UTF-8
-
-# 调试日志
-logging:
-  level:
-    io:
-      modelcontextprotocol:
-        client: DEBUG
-        spec: DEBUG
 

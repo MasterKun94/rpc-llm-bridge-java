@@ -20,11 +20,19 @@ package com.alibaba.cloud.ai.mcp.samples.client;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Main application class for the MCP client example.
+ * This application demonstrates how to use the MCP client to communicate with AI models
+ * through the MCP Gateway.
+ */
 @SpringBootApplication(exclude = {
         org.springframework.ai.mcp.client.autoconfigure.SseHttpClientTransportAutoConfiguration.class
 })
 public class ExampleMcpClientApplication {
 
+    /**
+     * Entry point for the MCP client application.
+     */
     public static void main(String[] args) {
         SpringApplication.run(ExampleMcpClientApplication.class, args);
     }

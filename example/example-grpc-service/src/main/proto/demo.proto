@@ -3,24 +3,33 @@ option java_package = "io.masterkun.mcp.proto";
 option java_outer_classname = "ExampleProto";
 package io.masterkun.mcp;
 
+// This proto file defines the example gRPC service with two operations:
+// 1. Converting text to uppercase
+// 2. Getting the current time in a specified timezone
+
 import "mcp.proto";
 
+// Request message for the toUpperCase operation
 message ToUpperCaseReq {
   string message = 1 [(mcp.field_desc) = "请求内容", (mcp.field_required) = true];
 }
 
+// Response message for the toUpperCase operation
 message ToUpperCaseRes {
   string message = 1 [(mcp.field_desc) = "结果内容"];
 }
 
+// Request message for the getTime operation
 message ZonedTimeReq {
   string timezone = 1 [(mcp.field_desc) = "时区编码（例如UTC+8）"];
 }
 
+// Response message for the getTime operation
 message ZonedTimeRes {
   string datetime = 1 [(mcp.field_desc) = "当前日期时间，格式为yyyy-MM-dd HH:mm:ss"];
 }
 
+// Service definition for the example gRPC service
 service ExampleService {
   rpc toUpperCase(ToUpperCaseReq) returns (ToUpperCaseRes) {
     option (mcp.method_desc) = "将字符串内容转换为大写";
