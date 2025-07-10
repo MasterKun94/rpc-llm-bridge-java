@@ -2,11 +2,12 @@ package io.masterkun.ai.tool;
 
 public interface BridgeToolCallback<T> {
 
-	BridgeToolDefinition<T> getToolDefinition();
+    BridgeToolDefinition<T> getToolDefinition();
 
-	default BridgeToolMetadata getToolMetadata() {
-		return new BridgeToolMetadata() {};
-	}
+    default BridgeToolMetadata getToolMetadata() {
+        return new BridgeToolMetadata() {
+        };
+    }
 
-	T call(String toolInput);
+    T call(String toolInput);
 }

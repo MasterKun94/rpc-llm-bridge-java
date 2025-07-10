@@ -1,13 +1,12 @@
-
 package io.masterkun.ai.tool;
 
 public interface BridgeToolDefinition<T> {
 
-	String name();
+    String name();
 
-	String description();
+    String description();
 
-	String inputSchema();
+    String inputSchema();
 
-	BridgeToolResultConverterProvider<T> resultConverter();
+    BridgeToolResultConverterProvider<T> resultConverter();
 }

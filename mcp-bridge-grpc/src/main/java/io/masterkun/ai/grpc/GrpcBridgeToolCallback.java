@@ -20,16 +20,19 @@ public class GrpcBridgeToolCallback<T extends Message> implements BridgeToolCall
     private final ManagedChannel channel;
 
     public GrpcBridgeToolCallback(MethodDescriptor<?, T> method, ManagedChannel channel) {
-        this(GrpcBridgeToolDefinition.of(method), new BridgeToolMetadata() {}, channel);
+        this(GrpcBridgeToolDefinition.of(method), new BridgeToolMetadata() {
+        }, channel);
     }
 
-    public GrpcBridgeToolCallback(GrpcBridgeToolDefinition<T> definition, BridgeToolMetadata metadata, ManagedChannel channel) {
+    public GrpcBridgeToolCallback(GrpcBridgeToolDefinition<T> definition,
+                                  BridgeToolMetadata metadata, ManagedChannel channel) {
         this.definition = definition;
         this.metadata = metadata;
         this.channel = channel;
     }
 
-    public static <T extends Message> GrpcBridgeToolCallback<T> of(MethodDescriptor<?, T> method, ManagedChannel channel) {
+    public static <T extends Message> GrpcBridgeToolCallback<T> of(MethodDescriptor<?, T> method,
+                                                                   ManagedChannel channel) {
         return new GrpcBridgeToolCallback<>(method, channel);
     }
 
@@ -48,7 +51,8 @@ public class GrpcBridgeToolCallback<T extends Message> implements BridgeToolCall
         @SuppressWarnings("unchecked")
         var method = (MethodDescriptor<DynamicMessage, T>) definition.getMethod();
         ClientCall<?, T> call = channel.newCall(method, CallOptions.DEFAULT);
-        ExampleServiceGrpc.ExampleServiceBlockingStub stub = ExampleServiceGrpc.newBlockingStub(channel);
+        ExampleServiceGrpc.ExampleServiceBlockingStub stub =
+                ExampleServiceGrpc.newBlockingStub(channel);
         Descriptors.Descriptor descriptor = GrpcUtils.getInputDescriptor(method);
         DynamicMessage.Builder builder = DynamicMessage.newBuilder(descriptor);
         ProtoUtils.fromJson(toolInput, builder);

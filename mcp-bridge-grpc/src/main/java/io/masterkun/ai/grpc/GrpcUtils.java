@@ -10,18 +10,18 @@ import javax.annotation.Nullable;
 public class GrpcUtils {
 
     public static Descriptors.Descriptor getInputDescriptor(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = extractProtoMethod(method);
+        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return descriptor.getInputType();
     }
 
     public static Descriptors.Descriptor getOutputDescriptor(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = extractProtoMethod(method);
+        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return descriptor.getOutputType();
     }
 
     @Nullable
     public static String getMethodDesc(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = extractProtoMethod(method);
+        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getMethodDesc(descriptor);
     }
 
@@ -34,7 +34,7 @@ public class GrpcUtils {
     }
 
     public static String getMethodName(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = extractProtoMethod(method);
+        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getMethodName(descriptor);
     }
 
@@ -46,7 +46,7 @@ public class GrpcUtils {
     }
 
     public static String getInputSchema(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = extractProtoMethod(method);
+        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getInputSchema(descriptor);
     }
 
@@ -55,7 +55,7 @@ public class GrpcUtils {
     }
 
     public static String getOutputSchema(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = extractProtoMethod(method);
+        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
         return getOutputSchema(descriptor);
     }
 
@@ -63,10 +63,11 @@ public class GrpcUtils {
         return ProtoUtils.getJsonSchema(descriptor.getOutputType());
     }
 
-    private static Descriptors.MethodDescriptor extractProtoMethod(MethodDescriptor<?, ?> method) {
+    public static Descriptors.MethodDescriptor getProtoMethod(MethodDescriptor<?, ?> method) {
         Object obj = method.getSchemaDescriptor();
         if (!(obj instanceof ProtoMethodDescriptorSupplier)) {
-            throw new IllegalArgumentException("Schema descriptor is not a ProtoMethodDescriptorSupplier");
+            throw new IllegalArgumentException("Schema descriptor is not a " +
+                                               "ProtoMethodDescriptorSupplier");
         }
         return ((ProtoMethodDescriptorSupplier) obj).getMethodDescriptor();
     }

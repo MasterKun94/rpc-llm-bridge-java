@@ -54,7 +54,8 @@ public class Controller {
     }
 
     @GetMapping("/stream/chat")
-    public Flux<String> streamChat(@RequestParam("query") String query, HttpServletResponse response) {
+    public Flux<String> streamChat(@RequestParam("query") String query,
+                                   HttpServletResponse response) {
         // 避免返回乱码
         response.setCharacterEncoding("UTF-8");
         return chatClient.prompt(query)

@@ -17,7 +17,8 @@ import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 public class BridgeToolCallbackAutoConfigure implements InitializingBean {
-    private static final Logger LOG = LoggerFactory.getLogger(BridgeToolCallbackAutoConfigure.class);
+    private static final Logger LOG =
+            LoggerFactory.getLogger(BridgeToolCallbackAutoConfigure.class);
 
     private final ApplicationContext context;
 
@@ -35,7 +36,8 @@ public class BridgeToolCallbackAutoConfigure implements InitializingBean {
     @ConditionalOnProperty(name = "mcp-bridge.auto-detect.enabled", havingValue = "true")
     public ToolCallbackProvider bridgeToolCallbackProvider() {
         List<ToolCallback> callbacks = new ArrayList<>();
-        for (BridgeToolCallback<?> value : context.getBeansOfType(BridgeToolCallback.class).values()) {
+        for (BridgeToolCallback<?> value :
+                context.getBeansOfType(BridgeToolCallback.class).values()) {
             LOG.info("Registering bridge tool callback: {}", value.getToolDefinition().name());
             callbacks.add(new ProxyToolCallback<>(value));
         }

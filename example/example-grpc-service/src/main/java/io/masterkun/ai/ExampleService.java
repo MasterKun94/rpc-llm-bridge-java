@@ -9,11 +9,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ExampleService extends ExampleServiceGrpc.ExampleServiceImplBase {
-    public static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+    public static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss" +
+                                                                            ".SSS");
 
     @Override
     public void toUpperCase(ExampleProto.ToUpperCaseReq request,
-                             StreamObserver<ExampleProto.ToUpperCaseRes> responseObserver) {
+                            StreamObserver<ExampleProto.ToUpperCaseRes> responseObserver) {
         responseObserver.onNext(ExampleProto.ToUpperCaseRes.newBuilder()
                 .setMessage(request.getMessage().toUpperCase())
                 .build());

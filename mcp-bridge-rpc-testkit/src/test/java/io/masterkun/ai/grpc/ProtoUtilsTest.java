@@ -46,14 +46,14 @@ public class ProtoUtilsTest {
         builder.putMap2(200, ByteString.copyFromUtf8("map2 value2"));
 
         builder.putMap3("key", ForTestProto.Elem3.newBuilder()
-                        .setC2(123.567f)
-                        .addC6(789.5)
-                        .addC6(987.5)
-                        .addAllC5(List.of(
-                                ByteString.copyFromUtf8("c5 value1"),
-                                ByteString.copyFromUtf8("c5 value2")
-                        ))
-                        .setC7(ForTestProto.TestEnum.BBB)
+                .setC2(123.567f)
+                .addC6(789.5)
+                .addC6(987.5)
+                .addAllC5(List.of(
+                        ByteString.copyFromUtf8("c5 value1"),
+                        ByteString.copyFromUtf8("c5 value2")
+                ))
+                .setC7(ForTestProto.TestEnum.BBB)
                 .build());
 
         // Add repeated fields
@@ -73,7 +73,8 @@ public class ProtoUtilsTest {
     @Test
     public void testDynamicMessageSerialize() throws Exception {
         String json = ProtoUtils.toJson(REQ);
-        DynamicMessage.Builder builder1 = DynamicMessage.newBuilder(ForTestProto.TestReq.getDescriptor());
+        DynamicMessage.Builder builder1 =
+                DynamicMessage.newBuilder(ForTestProto.TestReq.getDescriptor());
         ForTestProto.TestReq.Builder builder2 = ForTestProto.TestReq.newBuilder();
         ProtoUtils.fromJson(json, builder1);
         ProtoUtils.fromJson(json, builder2);
@@ -83,7 +84,8 @@ public class ProtoUtilsTest {
         String json2 = ProtoUtils.toJson(req2);
         assertEquals(req1, req2);
 
-        DynamicMessage.Builder builder3 = DynamicMessage.newBuilder(ForTestProto.TestReq.getDescriptor());
+        DynamicMessage.Builder builder3 =
+                DynamicMessage.newBuilder(ForTestProto.TestReq.getDescriptor());
         ForTestProto.TestReq.Builder builder4 = ForTestProto.TestReq.newBuilder();
         ProtoUtils.fromJson(json1, builder4);
         ProtoUtils.fromJson(json2, builder3);
@@ -306,7 +308,8 @@ public class ProtoUtilsTest {
         assertEquals(0, minimalMessage.getElemsCount());
 
         // Test with empty arrays and maps
-        String emptyCollectionsJson = "{\"message\": \"empty collections\", \"list\": [], \"elems\": [], \"map1\": {}}";
+        String emptyCollectionsJson = "{\"message\": \"empty collections\", \"list\": [], " +
+                                      "\"elems\": [], \"map1\": {}}";
         ForTestProto.TestReq.Builder emptyCollectionsBuilder = ForTestProto.TestReq.newBuilder();
         ProtoUtils.fromJson(emptyCollectionsJson, emptyCollectionsBuilder);
         ForTestProto.TestReq emptyCollectionsMessage = emptyCollectionsBuilder.build();
@@ -508,14 +511,17 @@ public class ProtoUtilsTest {
         assertTrue(propertiesNode.has("map1"));
         assertEquals("object", propertiesNode.get("map1").get("type").asText());
         assertTrue(propertiesNode.get("map1").has("additionalProperties"));
-        assertEquals("integer", propertiesNode.get("map1").get("additionalProperties").get("type").asText());
+        assertEquals("integer",
+                propertiesNode.get("map1").get("additionalProperties").get("type").asText());
 
         // Verify map2 field in schema
         assertTrue(propertiesNode.has("map2"));
         assertEquals("object", propertiesNode.get("map2").get("type").asText());
         assertTrue(propertiesNode.get("map2").has("additionalProperties"));
-        assertEquals("string", propertiesNode.get("map2").get("additionalProperties").get("type").asText());
-        assertEquals("base64", propertiesNode.get("map2").get("additionalProperties").get("contentEncoding").asText());
+        assertEquals("string",
+                propertiesNode.get("map2").get("additionalProperties").get("type").asText());
+        assertEquals("base64", propertiesNode.get("map2").get("additionalProperties").get(
+                "contentEncoding").asText());
 
         // Validate JSON against schema
         JsonNode jsonNode = JsonLoader.fromString(json);
