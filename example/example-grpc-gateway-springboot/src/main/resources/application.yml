@@ -1,0 +1,9 @@
+server:
+  port: 8081
+
+spring.ai.mcp.server:
+  name: gateway-server
+  version: 1.0.0
+
+mcp-bridge.auto-detect.enabled: true
+

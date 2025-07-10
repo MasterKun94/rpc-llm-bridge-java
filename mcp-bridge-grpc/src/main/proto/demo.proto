@@ -10,11 +10,11 @@ message ToUpperCaseReq {
 }
 
 message ToUpperCaseRes {
-  string message = 1 [(mcp.field_desc) = "返回结果"];
+  string message = 1 [(mcp.field_desc) = "结果内容"];
 }
 
 message ZonedTimeReq {
-  string timezone = 1 [(mcp.field_desc) = "时区编码，例如UTC+8"];
+  string timezone = 1 [(mcp.field_desc) = "时区编码（例如UTC+8）"];
 }
 
 message ZonedTimeRes {
@@ -22,7 +22,7 @@ message ZonedTimeRes {
 }
 
 service ExampleService {
-  rpc toUpperCache(ToUpperCaseReq) returns (ToUpperCaseRes) {
+  rpc toUpperCase(ToUpperCaseReq) returns (ToUpperCaseRes) {
     option (mcp.method_desc) = "将字符串内容转换为大写";
   }
 

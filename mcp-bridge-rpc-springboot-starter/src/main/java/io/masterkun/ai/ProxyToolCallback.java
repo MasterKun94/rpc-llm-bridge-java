@@ -3,6 +3,7 @@ package io.masterkun.ai;
 import io.masterkun.ai.tool.BridgeToolCallback;
 import io.masterkun.ai.tool.BridgeToolResultConverter;
 import jakarta.annotation.Nonnull;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.metadata.ToolMetadata;
@@ -32,5 +33,11 @@ public class ProxyToolCallback<T> implements ToolCallback {
     @Override
     public String call(@Nonnull String toolInput) {
         return converter.convert(delegate.call(toolInput));
+    }
+
+    @Nonnull
+    @Override
+    public String call(@Nonnull String toolInput, ToolContext tooContext) {
+        return call(toolInput);
     }
 }

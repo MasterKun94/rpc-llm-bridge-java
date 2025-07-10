@@ -14,7 +14,9 @@
         <module>mcp-bridge-rpc-springboot-starter</module>
         <module>mcp-bridge-rpc-testkit</module>
         <module>mcp-bridge-rpc-core</module>
-        <module>mcp-bridge-rpc-example</module>
+        <module>example/example-grpc-service</module>
+        <module>example/example-grpc-gateway-springboot</module>
+        <module>example/example-client-springboot</module>
     </modules>
 
     <properties>
@@ -141,6 +143,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
+                <configuration>
+                    <parameters>true</parameters>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -29,6 +29,10 @@ public class GrpcBridgeToolCallback<T extends Message> implements BridgeToolCall
         this.channel = channel;
     }
 
+    public static <T extends Message> GrpcBridgeToolCallback<T> of(MethodDescriptor<?, T> method, ManagedChannel channel) {
+        return new GrpcBridgeToolCallback<>(method, channel);
+    }
+
     @Override
     public BridgeToolDefinition<T> getToolDefinition() {
         return definition;

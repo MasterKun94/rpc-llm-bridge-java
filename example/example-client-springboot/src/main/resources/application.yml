@@ -1,0 +1,29 @@
+server:
+  port: 8888
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: mcp
+  ai:
+    dashscope:
+      api-key: "sk-7dee538ba48d48c29ecd0d6a6c50991c"
+    mcp.client:
+      toolcallback.enabled: true
+      sse.connections:
+        gateway-server:
+          url: http://localhost:8081
+  mandatory-file-encoding: UTF-8
+
+# 调试日志
+logging:
+  level:
+    io:
+      modelcontextprotocol:
+        client: DEBUG
+        spec: DEBUG
+

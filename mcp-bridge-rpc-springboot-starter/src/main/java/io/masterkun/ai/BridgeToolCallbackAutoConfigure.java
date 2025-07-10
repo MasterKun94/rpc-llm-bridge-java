@@ -1,7 +1,6 @@
 package io.masterkun.ai;
 
 import io.masterkun.ai.tool.BridgeToolCallback;
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.ToolCallback;
@@ -16,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class BridgeToolCallbackAutoConfigure implements InitializingBean {
     private static final Logger LOG = LoggerFactory.getLogger(BridgeToolCallbackAutoConfigure.class);
 

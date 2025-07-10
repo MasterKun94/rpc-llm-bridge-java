@@ -8,6 +8,7 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.DynamicMessage;
+import io.masterkun.mcp.proto.ExampleProto;
 import io.masterkun.mcp.proto.ForTestProto;
 import org.junit.Test;
 
@@ -96,6 +97,22 @@ public class ProtoUtilsTest {
     @Test
     public void testFormatString() {
         System.out.println(ProtoUtils.formatString(REQ));
+    }
+
+
+    @Test
+    public void testFormatStringSimple() {
+        System.out.println(ProtoUtils.formatString(ForTestProto.Elem1.newBuilder()
+                .setA1(1)
+                .setA2(true)
+                .setA3(ByteString.copyFromUtf8("test"))));
+    }
+
+    @Test
+    public void testFormatSingleField() {
+        System.out.println(ProtoUtils.formatString(ExampleProto.ToUpperCaseRes.newBuilder()
+                .setMessage("TEST MESSAGE")
+                .build()));
     }
 
     @Test

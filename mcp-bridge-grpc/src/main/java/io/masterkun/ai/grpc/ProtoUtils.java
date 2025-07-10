@@ -213,11 +213,26 @@ public class ProtoUtils {
     public static String formatString(MessageOrBuilder message) {
         StringBuilder builder = new StringBuilder();
         List<Integer> list = new ArrayList<>();
-        formatTo(message, builder, list);
+
+        Map<Descriptors.FieldDescriptor, Object> fields = message.getAllFields();
+        boolean formatLevel = fields
+                .keySet()
+                .stream()
+                .anyMatch(ProtoUtils::isFieldComposite);
+        if (!formatLevel && fields.size() == 1) {
+            builder.append(fields.values().iterator().next());
+        } else {
+            formatTo(message, builder, list, formatLevel);
+        }
         return builder.toString();
     }
 
-    private static void formatTo(Object message, StringBuilder builder, List<Integer> level) {
+    private static boolean isFieldComposite(Descriptors.FieldDescriptor field) {
+        return field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE || field.isRepeated();
+    }
+
+    private static void formatTo(Object message, StringBuilder builder, List<Integer> level,
+                                 boolean formatLevel) {
         if (message == null) {
             builder.append("null");
         } else if (message instanceof CharSequence) {
@@ -249,12 +264,12 @@ public class ProtoUtils {
                 if (first) {
                     first = false;
                 }
-                formatLevel(level, builder);
+                formatLevel(level, builder, formatLevel);
                 String name = field.getOptions().hasExtension(McpProto.fieldDesc) ?
                         field.getOptions().getExtension(McpProto.fieldDesc) :
                         field.getName();
                 builder.append(name).append(": ");
-                formatTo(value, builder, level);
+                formatTo(value, builder, level, formatLevel);
                 level.set(level.size() - 1, level.get(level.size() - 1) + 1);
             }
             level.remove(level.size() - 1);
@@ -267,7 +282,7 @@ public class ProtoUtils {
                     first = false;
                     singleLine =
                             !((o instanceof MapEntry<?, ?> e && e.getValue() instanceof MessageOrBuilder) ||
-                                   o instanceof MessageOrBuilder);
+                              o instanceof MessageOrBuilder);
                     if (singleLine) {
                         builder.append('[');
                     }
@@ -276,17 +291,18 @@ public class ProtoUtils {
                 }
                 if (o instanceof MapEntry<?, ?> e) {
                     if (e.getValue() instanceof MessageOrBuilder m) {
-                        formatLevel(level, builder);
+                        formatLevel(level, builder, formatLevel);
                         builder.append(e.getKey()).append(": ");
-                        formatTo(m, builder, level);
+                        formatTo(m, builder, level, formatLevel);
                     } else {
-                        formatTo(e.getValue(), builder.append(e.getKey()).append(": "), level);
+                        formatTo(e.getValue(), builder.append(e.getKey()).append(": "), level,
+                                formatLevel);
                     }
                 } else if (o instanceof MessageOrBuilder m) {
-                    formatLevel(level, builder);
-                    formatTo(m, builder, level);
+                    formatLevel(level, builder, formatLevel);
+                    formatTo(m, builder, level, formatLevel);
                 } else {
-                    formatTo(o, builder, level);
+                    formatTo(o, builder, level, formatLevel);
                 }
                 level.set(level.size() - 1, level.get(level.size() - 1) + 1);
             }
@@ -303,7 +319,7 @@ public class ProtoUtils {
                 } else {
                     builder.append(", ");
                 }
-                formatTo(o.getValue(), builder.append(o.getKey()).append(": "), level);
+                formatTo(o.getValue(), builder.append(o.getKey()).append(": "), level, formatLevel);
             }
             builder.append('}');
         } else {
@@ -311,10 +327,13 @@ public class ProtoUtils {
         }
     }
 
-    private static void formatLevel(List<Integer> level, StringBuilder builder) {
+    private static void formatLevel(List<Integer> level, StringBuilder builder,
+                                    boolean formatLevel) {
         builder.append("\n");
         builder.append("  ".repeat(level.size() - 1));
-        builder.append(level.stream().map(Object::toString).collect(Collectors.joining(".", "",
-                ". ")));
+        if (formatLevel) {
+            builder.append(level.stream().map(Object::toString).collect(Collectors.joining(".", "",
+                    ". ")));
+        }
     }
 }

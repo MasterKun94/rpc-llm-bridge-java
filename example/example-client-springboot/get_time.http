@@ -1,0 +1,4 @@
+GET http://localhost:8888/client/stream/chat?query=美国华盛顿当前时间是多少
+
+###
+GET http://localhost:8888/client/stream/chat?query=y=把'test'转换为大写
