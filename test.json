@@ -1,0 +1,112 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "title" : "TestReq",
+  "type" : "object",
+  "oneOf" : [ {
+    "required" : [ "elem1" ]
+  }, {
+    "required" : [ "elem2" ]
+  }, {
+    "not" : {
+      "anyOf" : [ {
+        "required" : [ "elem1" ]
+      }, {
+        "required" : [ "elem2" ]
+      } ]
+    }
+  } ],
+  "properties" : {
+    "message" : {
+      "description" : "请求内容",
+      "type" : "string"
+    },
+    "map1" : {
+      "description" : "MAP1",
+      "type" : "object",
+      "additionalProperties" : {
+        "type" : "integer"
+      },
+      "properties" : { }
+    },
+    "map2" : {
+      "description" : "MAP2",
+      "type" : "object",
+      "additionalProperties" : {
+        "type" : "string",
+        "format" : "byte",
+        "description" : "Base64 encoded binary data"
+      },
+      "properties" : { }
+    },
+    "list" : {
+      "description" : "LIST",
+      "type" : "array",
+      "items" : {
+        "type" : "string"
+      }
+    },
+    "elems" : {
+      "description" : "ELEMS",
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "a1" : {
+            "description" : "字段a1",
+            "type" : "integer"
+          },
+          "a2" : {
+            "description" : "字段a2",
+            "type" : "boolean"
+          },
+          "a3" : {
+            "description" : "字段a3 (Base64 encoded binary data)",
+            "type" : "string",
+            "format" : "byte"
+          }
+        },
+        "required" : [ "a3" ]
+      }
+    },
+    "elem1" : {
+      "description" : "请求元素1",
+      "type" : "object",
+      "properties" : {
+        "a1" : {
+          "description" : "字段a1",
+          "type" : "integer"
+        },
+        "a2" : {
+          "description" : "字段a2",
+          "type" : "boolean"
+        },
+        "a3" : {
+          "description" : "字段a3 (Base64 encoded binary data)",
+          "type" : "string",
+          "format" : "byte"
+        }
+      },
+      "required" : [ "a3" ]
+    },
+    "elem2" : {
+      "description" : "请求元素2",
+      "type" : "object",
+      "properties" : {
+        "b1" : {
+          "description" : "字段b1",
+          "type" : "integer"
+        },
+        "b2" : {
+          "description" : "字段b2",
+          "type" : "boolean"
+        },
+        "b3" : {
+          "description" : "字段b3 (Base64 encoded binary data)",
+          "type" : "string",
+          "format" : "byte"
+        }
+      }
+    }
+  },
+  "required" : [ "message", "list" ]
+}

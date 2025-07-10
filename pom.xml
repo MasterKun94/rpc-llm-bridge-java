@@ -4,14 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.masterkun</groupId>
-    <artifactId>grpc-mcp-gateway</artifactId>
+    <groupId>io.masterkun.ai</groupId>
+    <artifactId>mcp-bridge-rpc</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <modules>
-        <module>grpc-mcp-gateway-core</module>
-        <module>grpc-mcp-gateway-springboot-starter</module>
-        <module>grpc-mcp-gateway-testkit</module>
+        <module>mcp-bridge-grpc</module>
+        <module>mcp-bridge-rpc-springboot-starter</module>
+        <module>mcp-bridge-rpc-testkit</module>
+        <module>mcp-bridge-rpc-core</module>
+        <module>mcp-bridge-rpc-example</module>
     </modules>
 
     <properties>
@@ -27,6 +30,27 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.masterkun.ai</groupId>
+                <artifactId>mcp-bridge-rpc-core</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.masterkun.ai</groupId>
+                <artifactId>mcp-bridge-rpc-springboot-starter</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.masterkun.ai</groupId>
+                <artifactId>mcp-bridge-rpc-testkit</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.masterkun.ai</groupId>
+                <artifactId>mcp-bridge-grpc</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
