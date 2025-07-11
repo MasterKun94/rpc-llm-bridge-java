@@ -367,8 +367,9 @@ public class ProtoUtils {
         builder.append("\n");
         builder.append("  ".repeat(level.size() - 1));
         if (formatLevel) {
-            builder.append(level.stream().map(Object::toString).collect(Collectors.joining(".", "",
-                    ". ")));
+            builder.append(level.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(".", "", ". ")));
         }
     }
 }

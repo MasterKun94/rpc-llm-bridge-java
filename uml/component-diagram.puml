@@ -1,0 +1,52 @@
+@startuml
+!theme plain
+skinparam componentStyle rectangle
+
+title gRPC MCP Bridge Component Diagram
+
+' Define components
+[LLM] as LLM
+[MCP Client] as McpClient
+[MCP Bridge] as McpBridge
+[gRPC Server] as GrpcServer
+
+' Define relationships
+LLM <--> McpClient : "Natural Language\nInteraction"
+McpClient <--> McpBridge : "MCP Protocol"
+McpBridge <--> GrpcServer : "gRPC Protocol"
+
+' Add notes
+note top of LLM
+  Large Language Model
+  Processes natural language
+  and decides which tools to call
+end note
+
+note top of McpClient
+  Client application that
+  interfaces with the LLM
+end note
+
+note top of McpBridge
+  Converts between MCP and gRPC
+  protocols, enabling LLM to
+  call gRPC services
+end note
+
+note top of GrpcServer
+  Provides business logic
+  through gRPC services
+end note
+
+' Add flow description
+note bottom
+  Data Flow:
+  1. User sends request to MCP Client
+  2. MCP Client forwards to LLM
+  3. LLM decides to call a tool via MCP Bridge
+  4. MCP Bridge converts request to gRPC format
+  5. gRPC Server processes request and returns result
+  6. Result flows back through the same path to user
+end note
+
+@enduml
