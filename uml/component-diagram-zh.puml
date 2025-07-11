@@ -1,0 +1,66 @@
+@startuml
+!theme plain
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+title gRPC MCP Bridge 组件图
+
+' 定义组件
+[LLM] as LLM
+[MCP 客户端] as McpClient
+[gRPC 服务器] as GrpcServer1
+[gRPC 服务器] as GrpcServer2
+
+' 定义 MCP Bridge 及其内部组件
+package "MCP Bridge" as McpBridge {
+  [gRPC 通道] as GrpcChannel
+  [BridgeToolCallback] as ToolCallback
+
+  ' 内部关系
+  ToolCallback --> GrpcChannel : "通过"
+}
+
+' 定义外部关系
+LLM <--> McpClient : "自然语言\n交互"
+McpClient <--> ToolCallback : "MCP 协议"
+GrpcChannel <--> GrpcServer1 : "gRPC 协议"
+GrpcChannel <--> GrpcServer2
+
+' 添加注释
+note top of LLM
+  大型语言模型
+  处理自然语言
+  并决定调用哪些工具
+end note
+
+note top of McpClient
+  与 LLM 交互的
+  客户端应用程序
+end note
+
+note top of GrpcServer1
+  通过 gRPC 服务
+  提供业务逻辑
+end note
+
+note right of ToolCallback
+  根据工具输入
+  处理 gRPC 方法调用
+end note
+note right of GrpcChannel
+  管理与 gRPC 服务器
+  的通信
+end note
+
+' 添加流程描述
+note bottom
+  数据流:
+  1. 用户向 MCP 客户端发送请求
+  2. MCP 客户端转发给 LLM
+  3. LLM 决定通过 MCP Bridge 调用工具
+  4. MCP Bridge 将请求转换为 gRPC 格式
+  5. gRPC 服务器处理请求并返回结果
+  6. 结果通过相同路径流回用户
+end note
+
+@enduml

@@ -107,6 +107,12 @@ For detailed example usage instructions, please refer to [example/README.md](exa
 6. The Bridge converts the gRPC response to an MCP response and returns it to the large language model
 7. The large language model integrates the result into a natural language response and returns it to the user
 
+### Component Diagram
+
+The following diagram illustrates the component structure and interactions of the gRPC MCP Bridge:
+
+![Component Diagram](uml/component-diagram.puml.png)
+
 ## Installation and Setup
 
 1. Clone the repository:

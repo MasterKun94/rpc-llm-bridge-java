@@ -107,6 +107,12 @@ BridgeToolCallback<?> callback = new GrpcBridgeToolCallback<>(
 6. Bridge 将 gRPC 响应转换为 MCP 响应并返回给大模型
 7. 大模型将结果整合到自然语言响应中并返回给用户
 
+### 组件图
+
+下图展示了 gRPC MCP Bridge 的组件结构和交互关系：
+
+![组件图](uml/component-diagram-zh.puml.png)
+
 ## 安装与设置
 
 1. 克隆仓库：

@@ -1,19 +1,30 @@
 @startuml
 !theme plain
 skinparam componentStyle rectangle
+skinparam packageStyle rectangle
 
 title gRPC MCP Bridge Component Diagram
 
 ' Define components
 [LLM] as LLM
 [MCP Client] as McpClient
-[MCP Bridge] as McpBridge
-[gRPC Server] as GrpcServer
+[gRPC Server] as GrpcServer1
+[gRPC Server] as GrpcServer2
 
-' Define relationships
+' Define MCP Bridge with internal components
+package "MCP Bridge" as McpBridge {
+  [gRPC Channel] as GrpcChannel
+  [BridgeToolCallback] as ToolCallback
+
+  ' Internal relationships
+  ToolCallback --> GrpcChannel : "communicates via"
+}
+
+' Define external relationships
 LLM <--> McpClient : "Natural Language\nInteraction"
-McpClient <--> McpBridge : "MCP Protocol"
-McpBridge <--> GrpcServer : "gRPC Protocol"
+McpClient <--> ToolCallback : "MCP Protocol"
+GrpcChannel <--> GrpcServer1 : "gRPC Protocol"
+GrpcChannel <--> GrpcServer2
 
 ' Add notes
 note top of LLM
@@ -27,15 +38,18 @@ note top of McpClient
   interfaces with the LLM
 end note
 
-note top of McpBridge
-  Converts between MCP and gRPC
-  protocols, enabling LLM to
-  call gRPC services
-end note
-
-note top of GrpcServer
+note top of GrpcServer1
   Provides business logic
   through gRPC services
+end note
+
+note right of ToolCallback
+  Handles gRPC method calls
+  based on tool inputs
+end note
+note right of GrpcChannel
+  Manages communication
+  with gRPC Server
 end note
 
 ' Add flow description
