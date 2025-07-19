@@ -1,6 +1,8 @@
 package io.masterkun.ai.grpc;
 
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.DynamicMessage;
+import com.google.protobuf.Message;
 import io.grpc.MethodDescriptor;
 import io.grpc.protobuf.ProtoMethodDescriptorSupplier;
 import io.masterkun.mcp.proto.McpProto;
@@ -145,5 +147,47 @@ public class GrpcUtils {
                                                "ProtoMethodDescriptorSupplier");
         }
         return ((ProtoMethodDescriptorSupplier) obj).getMethodDescriptor();
+    }
+
+    /**
+     * Converts a Protobuf method descriptor to a gRPC method descriptor.
+     *
+     * @param method The Protobuf method descriptor to convert.
+     * @return A gRPC {@code MethodDescriptor} with appropriate type, method name, request marshaller, and response marshaller.
+     */
+    public static MethodDescriptor<? extends Message, ? extends Message> toGrpcMethod(Descriptors.MethodDescriptor method) {
+        DynamicMessage defaultInput = DynamicMessage.getDefaultInstance(method.getInputType());
+        DynamicMessage defaultOutput = DynamicMessage.getDefaultInstance(method.getOutputType());
+        MethodDescriptor.MethodType methodType = method.isClientStreaming() ?
+                method.isServerStreaming() ?
+                        MethodDescriptor.MethodType.BIDI_STREAMING :
+                        MethodDescriptor.MethodType.CLIENT_STREAMING :
+                method.isServerStreaming() ?
+                        MethodDescriptor.MethodType.SERVER_STREAMING :
+                        MethodDescriptor.MethodType.UNARY;
+        return MethodDescriptor.<Message, Message>newBuilder()
+                .setType(methodType)
+                .setFullMethodName(MethodDescriptor.generateFullMethodName(
+                        method.getService().getFullName(), method.getName()))
+                .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(defaultInput))
+                .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(defaultOutput))
+                .setSchemaDescriptor(new ProtoMethodDescriptorSupplier() {
+
+                    @Override
+                    public Descriptors.FileDescriptor getFileDescriptor() {
+                        return method.getFile();
+                    }
+
+                    @Override
+                    public Descriptors.ServiceDescriptor getServiceDescriptor() {
+                        return method.getService();
+                    }
+
+                    @Override
+                    public Descriptors.MethodDescriptor getMethodDescriptor() {
+                        return method;
+                    }
+                })
+                .build();
     }
 }

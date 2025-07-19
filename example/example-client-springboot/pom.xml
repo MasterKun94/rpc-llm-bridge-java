@@ -10,7 +10,6 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>example-client-springboot</artifactId>
-	<name>Spring AI - MCP WEBFLUX Client EXAMPLE</name>
 
 	<dependencies>
 

@@ -63,6 +63,18 @@ public class GrpcBridgeToolCallback<T extends Message> implements BridgeToolCall
     }
 
     /**
+     * Factory method to create a GrpcBridgeToolCallback instance using a protobuf method descriptor.
+     *
+     * @param method The protobuf method descriptor
+     * @param channel The managed channel for communication with the gRPC service
+     * @return A new GrpcBridgeToolCallback instance
+     */
+    public static GrpcBridgeToolCallback<? extends Message> of(Descriptors.MethodDescriptor method,
+                                                                   ManagedChannel channel) {
+        return new GrpcBridgeToolCallback<>(GrpcUtils.toGrpcMethod(method), channel);
+    }
+
+    /**
      * Returns the tool definition associated with this callback.
      *
      * @return The bridge tool definition
