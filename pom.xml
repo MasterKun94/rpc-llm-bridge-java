@@ -5,16 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.masterkun.ai</groupId>
-    <artifactId>mcp-bridge-grpc</artifactId>
+    <artifactId>grpc-llm-bridge-java</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>mcp-bridge-grpc-springboot-starter</module>
-        <module>mcp-bridge-grpc-testkit</module>
-        <module>mcp-bridge-grpc-core</module>
+        <module>grpc-llm-bridge-springboot-starter</module>
+        <module>grpc-llm-bridge-testkit</module>
+        <module>grpc-llm-bridge-core</module>
         <module>example/example-grpc-service</module>
-        <module>example/example-grpc-bridge-springboot</module>
+        <module>example/example-grpc-bridge-mcp-server</module>
         <module>example/example-client-springboot</module>
     </modules>
 
@@ -33,17 +33,17 @@
         <dependencies>
             <dependency>
                 <groupId>io.masterkun.ai</groupId>
-                <artifactId>mcp-bridge-grpc-core</artifactId>
+                <artifactId>grpc-llm-bridge-core</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.masterkun.ai</groupId>
-                <artifactId>mcp-bridge-grpc-springboot-starter</artifactId>
+                <artifactId>grpc-llm-bridge-springboot-starter</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.masterkun.ai</groupId>
-                <artifactId>mcp-bridge-grpc-testkit</artifactId>
+                <artifactId>grpc-llm-bridge-testkit</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
 

@@ -5,16 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.masterkun.ai</groupId>
-        <artifactId>mcp-bridge-grpc</artifactId>
+        <artifactId>grpc-llm-bridge-java</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>mcp-bridge-grpc-testkit</artifactId>
+    <artifactId>grpc-llm-bridge-testkit</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>io.masterkun.ai</groupId>
-            <artifactId>mcp-bridge-grpc-core</artifactId>
+            <artifactId>grpc-llm-bridge-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

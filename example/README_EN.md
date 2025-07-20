@@ -10,7 +10,7 @@ The example consists of three main components:
    - `toUpperCase`: Converts a string to uppercase
    - `getTime`: Gets the current time in a specified timezone
 
-2. **example-grpc-bridge-springboot**: A Spring Boot application that serves as an MCP Bridge, converting the gRPC service to an MCP service.
+2. **example-grpc-bridge-mcp-server**: A Spring Boot application that serves as an MCP server, converting the gRPC service to an MCP service.
 
 3. **example-client-springboot**: A Spring Boot application that serves as an MCP client, calling the MCP service through a large language model.
 
@@ -32,7 +32,7 @@ This service will start a gRPC server on port 8080 on your local machine.
 ### 2. Start the MCP Bridge
 
 ```bash
-cd example-grpc-bridge-springboot
+cd example-grpc-bridge-mcp-server
 mvn spring-boot:run
 ```
 

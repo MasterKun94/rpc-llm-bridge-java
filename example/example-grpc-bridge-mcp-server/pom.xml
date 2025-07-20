@@ -5,29 +5,31 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.masterkun.ai</groupId>
-        <artifactId>mcp-bridge-grpc</artifactId>
+        <artifactId>grpc-llm-bridge-java</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>mcp-bridge-grpc-springboot-starter</artifactId>
+    <artifactId>example-grpc-bridge-mcp-server</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-model</artifactId>
+            <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
         </dependency>
         <dependency>
             <groupId>io.masterkun.ai</groupId>
-            <artifactId>mcp-bridge-grpc-core</artifactId>
+            <artifactId>grpc-llm-bridge-springboot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.masterkun.ai</groupId>
+            <artifactId>example-grpc-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

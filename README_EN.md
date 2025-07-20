@@ -10,7 +10,7 @@ In large language model application development, we often need to allow models t
 
 The project consists of the following main components:
 
-1. **mcp-bridge-grpc-core**: Core module providing gRPC to MCP conversion functionality
+1. **grpc-llm-bridge-core**: Core module providing gRPC to MCP conversion functionality
    - GrpcBridgeToolDefinition: Defines metadata for gRPC methods as MCP tools
    - GrpcBridgeToolCallback: Handles gRPC method calls based on tool inputs
    - GrpcBridgeToolResultConverter: Converts protobuf message objects to formatted strings
@@ -21,7 +21,7 @@ The project consists of the following main components:
 
 3. **Example Applications**:
    - example-grpc-service: Example gRPC service
-   - example-grpc-bridge-springboot: Example MCP Bridge application
+   - example-grpc-bridge-mcp-server: Example MCP Bridge application
    - example-client-springboot: Example MCP client application
 
 ## Usage Instructions
@@ -91,7 +91,7 @@ The project includes a complete example demonstrating how to convert a gRPC serv
    - `toUpperCase`: Converts a string to uppercase
    - `getTime`: Gets the current time in a specified timezone
 
-2. **example-grpc-bridge-springboot**: A Spring Boot application that converts the gRPC service to an MCP service
+2. **example-grpc-bridge-mcp-server**: A Spring Boot application that converts the gRPC service to an MCP service
 
 3. **example-client-springboot**: A Spring Boot application that calls the MCP service through a large language model
 

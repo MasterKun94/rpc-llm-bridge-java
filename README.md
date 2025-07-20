@@ -21,7 +21,7 @@ gRPC MCP Bridge 是一个用于将 gRPC 服务转换为 MCP（Model-Client Proto
 
 3. **示例应用**：
    - example-grpc-service：示例 gRPC 服务
-   - example-grpc-bridge-springboot：示例 MCP Bridge 应用
+   - example-grpc-bridge-mcp-server：示例 MCP Bridge 应用
    - example-client-springboot：示例 MCP 客户端应用
 
 ## 使用方法
@@ -91,7 +91,7 @@ BridgeToolCallback<?> callback = new GrpcBridgeToolCallback<>(
    - `toUpperCase`：将字符串转换为大写
    - `getTime`：获取指定时区的当前时间
 
-2. **example-grpc-bridge-springboot**：将 gRPC 服务转换为 MCP 服务的 Spring Boot 应用
+2. **example-grpc-bridge-mcp-server**：将 gRPC 服务转换为 MCP 服务的 Spring Boot 应用
 
 3. **example-client-springboot**：通过大模型调用 MCP 服务的 Spring Boot 应用
 
