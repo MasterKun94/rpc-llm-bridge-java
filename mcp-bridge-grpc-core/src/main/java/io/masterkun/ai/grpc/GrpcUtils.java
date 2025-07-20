@@ -23,7 +23,7 @@ public class GrpcUtils {
      * @return The descriptor for the input message type
      */
     public static Descriptors.Descriptor getInputDescriptor(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
+        GrpcBridgeMethodDescriptor descriptor = getProtoMethod(method);
         return descriptor.getInputType();
     }
 
@@ -34,7 +34,7 @@ public class GrpcUtils {
      * @return The descriptor for the output message type
      */
     public static Descriptors.Descriptor getOutputDescriptor(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
+        GrpcBridgeMethodDescriptor descriptor = getProtoMethod(method);
         return descriptor.getOutputType();
     }
 
@@ -46,7 +46,7 @@ public class GrpcUtils {
      */
     @Nullable
     public static String getMethodDesc(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
+        GrpcBridgeMethodDescriptor descriptor = getProtoMethod(method);
         return getMethodDesc(descriptor);
     }
 
@@ -54,11 +54,11 @@ public class GrpcUtils {
      * Gets the description of a protobuf method.
      * The description is extracted from the method options extension.
      *
-     * @param descriptor The protobuf method descriptor
+     * @param descriptor The method descriptor
      * @return The method description, or null if not specified
      */
     @Nullable
-    public static String getMethodDesc(Descriptors.MethodDescriptor descriptor) {
+    public static String getMethodDesc(GrpcBridgeMethodDescriptor descriptor) {
         if (descriptor.getOptions().hasExtension(McpProto.methodDesc)) {
             return descriptor.getOptions().getExtension(McpProto.methodDesc);
         }
@@ -72,7 +72,7 @@ public class GrpcUtils {
      * @return The method name
      */
     public static String getMethodName(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
+        GrpcBridgeMethodDescriptor descriptor = getProtoMethod(method);
         return getMethodName(descriptor);
     }
 
@@ -81,14 +81,14 @@ public class GrpcUtils {
      * The name is extracted from the method options extension if available,
      * otherwise it's constructed from the service name and method name.
      *
-     * @param descriptor The protobuf method descriptor
+     * @param descriptor The method descriptor
      * @return The method name
      */
-    public static String getMethodName(Descriptors.MethodDescriptor descriptor) {
+    public static String getMethodName(GrpcBridgeMethodDescriptor descriptor) {
         if (descriptor.getOptions().hasExtension(McpProto.methodName)) {
             return descriptor.getOptions().getExtension(McpProto.methodName);
         }
-        return descriptor.getService().getName() + "." + descriptor.getName();
+        return descriptor.getServiceName() + "." + descriptor.getMethodName();
     }
 
     /**
@@ -98,17 +98,17 @@ public class GrpcUtils {
      * @return The JSON schema for the input message
      */
     public static String getInputSchema(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
+        GrpcBridgeMethodDescriptor descriptor = getProtoMethod(method);
         return getInputSchema(descriptor);
     }
 
     /**
      * Gets the JSON schema for the input message of a protobuf method.
      *
-     * @param descriptor The protobuf method descriptor
+     * @param descriptor The method descriptor
      * @return The JSON schema for the input message
      */
-    public static String getInputSchema(Descriptors.MethodDescriptor descriptor) {
+    public static String getInputSchema(GrpcBridgeMethodDescriptor descriptor) {
         return ProtoUtils.getJsonSchema(descriptor.getInputType());
     }
 
@@ -119,17 +119,17 @@ public class GrpcUtils {
      * @return The JSON schema for the output message
      */
     public static String getOutputSchema(MethodDescriptor<?, ?> method) {
-        Descriptors.MethodDescriptor descriptor = getProtoMethod(method);
+        GrpcBridgeMethodDescriptor descriptor = getProtoMethod(method);
         return getOutputSchema(descriptor);
     }
 
     /**
      * Gets the JSON schema for the output message of a protobuf method.
      *
-     * @param descriptor The protobuf method descriptor
+     * @param descriptor The method descriptor
      * @return The JSON schema for the output message
      */
-    public static String getOutputSchema(Descriptors.MethodDescriptor descriptor) {
+    public static String getOutputSchema(GrpcBridgeMethodDescriptor descriptor) {
         return ProtoUtils.getJsonSchema(descriptor.getOutputType());
     }
 
@@ -140,13 +140,14 @@ public class GrpcUtils {
      * @return The corresponding protobuf method descriptor
      * @throws IllegalArgumentException if the schema descriptor is not a ProtoMethodDescriptorSupplier
      */
-    public static Descriptors.MethodDescriptor getProtoMethod(MethodDescriptor<?, ?> method) {
+    public static GrpcBridgeMethodDescriptor getProtoMethod(MethodDescriptor<?, ?> method) {
         Object obj = method.getSchemaDescriptor();
         if (!(obj instanceof ProtoMethodDescriptorSupplier)) {
             throw new IllegalArgumentException("Schema descriptor is not a " +
                                                "ProtoMethodDescriptorSupplier");
         }
-        return ((ProtoMethodDescriptorSupplier) obj).getMethodDescriptor();
+        Descriptors.MethodDescriptor methodDescriptor = ((ProtoMethodDescriptorSupplier) obj).getMethodDescriptor();
+        return GrpcBridgeMethodDescriptor.fromDescriptor(methodDescriptor);
     }
 
     /**

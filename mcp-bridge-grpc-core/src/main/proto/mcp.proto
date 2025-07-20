@@ -19,3 +19,15 @@ extend google.protobuf.MethodOptions {
   optional string method_desc = 14193;
 }
 
+message TooCallMethodDescriptor {
+  string fullMethodName = 1;
+  bool clientStreaming = 2;
+  bool serverStreaming = 3;
+  google.protobuf.DescriptorProto inputType = 4;
+  google.protobuf.DescriptorProto outputType = 5;
+  bool idempotent = 6;
+  bool safe = 7;
+  bool sampledToLocalTracing = 8;
+  google.protobuf.MethodOptions methodOptions = 9;
+}
+
