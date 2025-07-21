@@ -10,7 +10,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>example-grpc-bridge-mcp-server</artifactId>
+    <artifactId>grpc-bridge-mcp-server</artifactId>
 
     <dependencies>
         <dependency>

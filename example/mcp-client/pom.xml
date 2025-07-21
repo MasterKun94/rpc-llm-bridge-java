@@ -9,7 +9,7 @@
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
-	<artifactId>example-client-springboot</artifactId>
+	<artifactId>mcp-client</artifactId>
 
 	<dependencies>
 

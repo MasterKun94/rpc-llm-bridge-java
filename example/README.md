@@ -10,9 +10,9 @@
    - `toUpperCase`：将字符串转换为大写
    - `getTime`：获取指定时区的当前时间
 
-2. **example-grpc-bridge-mcp-server**：一个 Spring Boot 应用，作为 MCP 服务端，将 gRPC 服务转换为 MCP 服务。
+2. **mcp-server-grpc-bridge**：一个 Spring Boot 应用，作为 MCP 服务端，将 gRPC 服务转换为 MCP 服务。
 
-3. **example-client-springboot**：一个 Spring Boot 应用，作为 MCP 客户端，通过大模型调用 MCP 服务。
+3. **mcp-client**：一个 Spring Boot 应用，作为 MCP 客户端，通过大模型调用 MCP 服务。
 
 ## 启动顺序
 
@@ -32,7 +32,7 @@ mvn spring-boot:run
 ### 2. 启动 MCP Bridge
 
 ```bash
-cd example-grpc-bridge-mcp-server
+cd mcp-server-grpc-bridge
 mvn spring-boot:run
 ```
 
@@ -41,7 +41,7 @@ mvn spring-boot:run
 ### 3. 启动 MCP 客户端
 
 ```bash
-cd example-client-springboot
+cd mcp-client
 mvn spring-boot:run
 ```
 
