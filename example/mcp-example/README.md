@@ -6,7 +6,7 @@
 
 示例由三个主要组件组成：
 
-1. **example-grpc-service**：一个简单的 gRPC 服务，提供两个方法：
+1. **mcp-example-grpc-service**：一个简单的 gRPC 服务，提供两个方法：
    - `toUpperCase`：将字符串转换为大写
    - `getTime`：获取指定时区的当前时间
 

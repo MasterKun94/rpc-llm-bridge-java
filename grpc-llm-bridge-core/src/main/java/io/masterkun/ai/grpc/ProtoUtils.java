@@ -18,10 +18,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Utility class for working with Protocol Buffer messages.
- * Provides methods for converting protobuf messages to/from JSON,
- * generating JSON schemas for protobuf descriptors, and formatting
- * protobuf messages as human-readable strings.
+ * Utility class for working with Protocol Buffer messages. Provides methods for converting protobuf
+ * messages to/from JSON, generating JSON schemas for protobuf descriptors, and formatting protobuf
+ * messages as human-readable strings.
  */
 public class ProtoUtils {
 
@@ -41,10 +40,10 @@ public class ProtoUtils {
     }
 
     /**
-     * Parses a JSON string into a protobuf message builder.
-     * Unknown fields in the JSON are ignored during parsing.
+     * Parses a JSON string into a protobuf message builder. Unknown fields in the JSON are ignored
+     * during parsing.
      *
-     * @param json The JSON string to parse
+     * @param json    The JSON string to parse
      * @param builder The protobuf message builder to populate
      * @throws RuntimeException if the parsing fails
      */
@@ -232,9 +231,8 @@ public class ProtoUtils {
     }
 
     /**
-     * Formats a protobuf message as a human-readable string.
-     * The format is optimized for readability, with nested messages and repeated fields
-     * properly indented and structured.
+     * Formats a protobuf message as a human-readable string. The format is optimized for
+     * readability, with nested messages and repeated fields properly indented and structured.
      *
      * @param message The protobuf message to format
      * @return A formatted string representation of the message

@@ -1,0 +1,20 @@
+# Configuration for the MCP client application
+server:
+  port: 8888
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: tooluser-example  # Application name
+  ai:
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY}  # API key for DashScope AI service
+  mandatory-file-encoding: UTF-8
+
+
+# Enable automatic detection of gRPC services
+mcp-bridge.auto-detect.enabled: true

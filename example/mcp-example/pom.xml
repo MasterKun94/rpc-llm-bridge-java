@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>example-grpc-service</module>
+        <module>mcp-example-grpc-service</module>
         <module>mcp-server-grpc-bridge</module>
         <module>mcp-client</module>
     </modules>

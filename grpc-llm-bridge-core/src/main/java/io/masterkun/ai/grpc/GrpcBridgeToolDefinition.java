@@ -6,9 +6,9 @@ import io.masterkun.ai.tool.BridgeToolDefinition;
 import io.masterkun.ai.tool.BridgeToolResultConverterProvider;
 
 /**
- * A definition class for gRPC bridge tools.
- * This class provides metadata about a gRPC method that can be exposed as an MCP tool,
- * including its name, description, input schema, and result conversion capabilities.
+ * A definition class for gRPC bridge tools. This class provides metadata about a gRPC method that
+ * can be exposed as an MCP tool, including its name, description, input schema, and result
+ * conversion capabilities.
  *
  * @param <T> The response message type from the gRPC service
  */
@@ -20,23 +20,24 @@ public class GrpcBridgeToolDefinition<T extends Message> implements BridgeToolDe
     /**
      * Private constructor for creating a GrpcBridgeToolDefinition.
      *
-     * @param method The gRPC method descriptor
-     * @param name The name of the tool
+     * @param method      The gRPC method descriptor
+     * @param name        The name of the tool
      * @param description The description of the tool
      */
-    private GrpcBridgeToolDefinition(MethodDescriptor<?, T> method, String name, String description) {
+    private GrpcBridgeToolDefinition(MethodDescriptor<?, T> method, String name,
+                                     String description) {
         this.method = method;
         this.name = name;
         this.description = description;
     }
 
     /**
-     * Factory method to create a GrpcBridgeToolDefinition from a gRPC method descriptor.
-     * Only unary methods are supported. The method name and description are extracted
-     * from the method descriptor or generated if not available.
+     * Factory method to create a GrpcBridgeToolDefinition from a gRPC method descriptor. Only unary
+     * methods are supported. The method name and description are extracted from the method
+     * descriptor or generated if not available.
      *
      * @param method The gRPC method descriptor
-     * @param <T> The response message type
+     * @param <T>    The response message type
      * @return A new GrpcBridgeToolDefinition instance
      * @throws IllegalArgumentException if the method is not a unary method
      */
@@ -73,8 +74,8 @@ public class GrpcBridgeToolDefinition<T extends Message> implements BridgeToolDe
     }
 
     /**
-     * Returns the JSON schema for the input of the tool.
-     * This schema is derived from the input message type of the gRPC method.
+     * Returns the JSON schema for the input of the tool. This schema is derived from the input
+     * message type of the gRPC method.
      *
      * @return The JSON schema for the tool input
      */
@@ -84,8 +85,8 @@ public class GrpcBridgeToolDefinition<T extends Message> implements BridgeToolDe
     }
 
     /**
-     * Returns a provider for creating result converters for this tool.
-     * The result converter transforms the gRPC response message to the desired output format.
+     * Returns a provider for creating result converters for this tool. The result converter
+     * transforms the gRPC response message to the desired output format.
      *
      * @return A provider for creating result converters
      */

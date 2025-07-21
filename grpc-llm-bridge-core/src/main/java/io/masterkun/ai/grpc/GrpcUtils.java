@@ -10,9 +10,9 @@ import io.masterkun.ai.proto.ToolProto;
 import javax.annotation.Nullable;
 
 /**
- * Utility class for working with gRPC method descriptors.
- * Provides methods to extract information from gRPC method descriptors,
- * such as input/output descriptors, method names, descriptions, and schemas.
+ * Utility class for working with gRPC method descriptors. Provides methods to extract information
+ * from gRPC method descriptors, such as input/output descriptors, method names, descriptions, and
+ * schemas.
  */
 public class GrpcUtils {
 
@@ -51,8 +51,8 @@ public class GrpcUtils {
     }
 
     /**
-     * Gets the description of a protobuf method.
-     * The description is extracted from the method options extension.
+     * Gets the description of a protobuf method. The description is extracted from the method
+     * options extension.
      *
      * @param descriptor The method descriptor
      * @return The method description, or null if not specified
@@ -77,9 +77,8 @@ public class GrpcUtils {
     }
 
     /**
-     * Gets the name of a protobuf method.
-     * The name is extracted from the method options extension if available,
-     * otherwise it's constructed from the service name and method name.
+     * Gets the name of a protobuf method. The name is extracted from the method options extension
+     * if available, otherwise it's constructed from the service name and method name.
      *
      * @param descriptor The method descriptor
      * @return The method name
@@ -138,7 +137,8 @@ public class GrpcUtils {
      *
      * @param method The gRPC method descriptor
      * @return The corresponding protobuf method descriptor
-     * @throws IllegalArgumentException if the schema descriptor is not a ProtoMethodDescriptorSupplier
+     * @throws IllegalArgumentException if the schema descriptor is not a
+     *                                  ProtoMethodDescriptorSupplier
      */
     public static GrpcBridgeMethodDescriptor getProtoMethod(MethodDescriptor<?, ?> method) {
         Object obj = method.getSchemaDescriptor();
@@ -146,7 +146,8 @@ public class GrpcUtils {
             throw new IllegalArgumentException("Schema descriptor is not a " +
                                                "ProtoMethodDescriptorSupplier");
         }
-        Descriptors.MethodDescriptor methodDescriptor = ((ProtoMethodDescriptorSupplier) obj).getMethodDescriptor();
+        Descriptors.MethodDescriptor methodDescriptor =
+                ((ProtoMethodDescriptorSupplier) obj).getMethodDescriptor();
         return GrpcBridgeMethodDescriptor.fromDescriptor(methodDescriptor);
     }
 
@@ -154,7 +155,8 @@ public class GrpcUtils {
      * Converts a Protobuf method descriptor to a gRPC method descriptor.
      *
      * @param method The Protobuf method descriptor to convert.
-     * @return A gRPC {@code MethodDescriptor} with appropriate type, method name, request marshaller, and response marshaller.
+     * @return A gRPC {@code MethodDescriptor} with appropriate type, method name, request
+     * marshaller, and response marshaller.
      */
     public static MethodDescriptor<? extends Message, ? extends Message> toGrpcMethod(Descriptors.MethodDescriptor method) {
         DynamicMessage defaultInput = DynamicMessage.getDefaultInstance(method.getInputType());

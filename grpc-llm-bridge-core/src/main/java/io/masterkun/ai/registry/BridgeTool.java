@@ -8,5 +8,5 @@ public interface BridgeTool<T extends BridgeToolCallback<?>> {
 
     List<String> tags();
 
-    T toolCallback();
+    T createToolCallback(Object serviceChannel);
 }

@@ -12,17 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Unit tests for {@link ProtoParser} class.
- * Tests verify that the methods work as described in their documentation.
+ * Unit tests for {@link ProtoParser} class. Tests verify that the methods work as described in
+ * their documentation.
  */
 public class ProtoParserTest {
 
     /**
-     * Test for {@link ProtoParser#load(java.io.InputStream)}.
-     * Verifies that the method correctly loads Protocol Buffer descriptors from an input stream.
+     * Test for {@link ProtoParser#load(java.io.InputStream)}. Verifies that the method correctly
+     * loads Protocol Buffer descriptors from an input stream.
      */
     @Test
     public void testLoadFromInputStream() throws IOException {
@@ -49,7 +52,8 @@ public class ProtoParserTest {
         assertTrue("Loaded descriptors should contain the file descriptor",
                 loadedDescriptors.containsKey(fileDescriptor.getName()));
         assertEquals("Loaded descriptor should match the original",
-                fileDescriptor.getName(), loadedDescriptors.get(fileDescriptor.getName()).getName());
+                fileDescriptor.getName(),
+                loadedDescriptors.get(fileDescriptor.getName()).getName());
     }
 
     /**
@@ -67,7 +71,8 @@ public class ProtoParserTest {
         DescriptorProtos.FileDescriptorSet fileDescriptorSet = ProtoParser.save(fileDescriptors);
 
         // Load the descriptors
-        Map<String, Descriptors.FileDescriptor> loadedDescriptors = ProtoParser.load(fileDescriptorSet);
+        Map<String, Descriptors.FileDescriptor> loadedDescriptors =
+                ProtoParser.load(fileDescriptorSet);
 
         // Verify the result
         assertNotNull("Loaded descriptors should not be null", loadedDescriptors);
@@ -75,7 +80,8 @@ public class ProtoParserTest {
         assertTrue("Loaded descriptors should contain the file descriptor",
                 loadedDescriptors.containsKey(fileDescriptor.getName()));
         assertEquals("Loaded descriptor should match the original",
-                fileDescriptor.getName(), loadedDescriptors.get(fileDescriptor.getName()).getName());
+                fileDescriptor.getName(),
+                loadedDescriptors.get(fileDescriptor.getName()).getName());
 
         // Verify that dependencies are resolved
         for (Descriptors.FileDescriptor dependency : fileDescriptor.getDependencies()) {
@@ -87,8 +93,8 @@ public class ProtoParserTest {
     }
 
     /**
-     * Test for {@link ProtoParser#save(java.util.List, java.io.OutputStream)}.
-     * Verifies that the method correctly saves a list of FileDescriptors to an output stream.
+     * Test for {@link ProtoParser#save(java.util.List, java.io.OutputStream)}. Verifies that the
+     * method correctly saves a list of FileDescriptors to an output stream.
      */
     @Test
     public void testSaveToOutputStream() throws IOException {
@@ -107,7 +113,8 @@ public class ProtoParserTest {
         assertTrue("Saved bytes should not be empty", bytes.length > 0);
 
         // Parse the bytes back to a FileDescriptorSet
-        DescriptorProtos.FileDescriptorSet parsedSet = DescriptorProtos.FileDescriptorSet.parseFrom(bytes);
+        DescriptorProtos.FileDescriptorSet parsedSet =
+                DescriptorProtos.FileDescriptorSet.parseFrom(bytes);
         assertNotNull("Parsed set should not be null", parsedSet);
         assertFalse("Parsed set should not be empty", parsedSet.getFileList().isEmpty());
 
@@ -123,9 +130,9 @@ public class ProtoParserTest {
     }
 
     /**
-     * Test for {@link ProtoParser#save(java.util.List)}.
-     * Verifies that the method correctly converts a list of FileDescriptors to a FileDescriptorSet
-     * and includes all dependencies of the provided FileDescriptors.
+     * Test for {@link ProtoParser#save(java.util.List)}. Verifies that the method correctly
+     * converts a list of FileDescriptors to a FileDescriptorSet and includes all dependencies of
+     * the provided FileDescriptors.
      */
     @Test
     public void testSaveToFileDescriptorSet() {
@@ -139,7 +146,8 @@ public class ProtoParserTest {
 
         // Verify the result
         assertNotNull("FileDescriptorSet should not be null", fileDescriptorSet);
-        assertFalse("FileDescriptorSet should not be empty", fileDescriptorSet.getFileList().isEmpty());
+        assertFalse("FileDescriptorSet should not be empty",
+                fileDescriptorSet.getFileList().isEmpty());
 
         // Verify that the original file descriptor is in the set
         boolean found = false;
@@ -165,8 +173,8 @@ public class ProtoParserTest {
     }
 
     /**
-     * Test for round-trip conversion.
-     * Verifies that saving and then loading descriptors produces the same result.
+     * Test for round-trip conversion. Verifies that saving and then loading descriptors produces
+     * the same result.
      */
     @Test
     public void testRoundTripConversion() throws IOException {
@@ -190,7 +198,8 @@ public class ProtoParserTest {
                 loadedDescriptors.containsKey(fileDescriptor.getName()));
 
         // Compare the original and loaded descriptors
-        Descriptors.FileDescriptor loadedDescriptor = loadedDescriptors.get(fileDescriptor.getName());
+        Descriptors.FileDescriptor loadedDescriptor =
+                loadedDescriptors.get(fileDescriptor.getName());
         assertEquals("Descriptor names should match",
                 fileDescriptor.getName(), loadedDescriptor.getName());
         assertEquals("Descriptor package names should match",
@@ -202,8 +211,8 @@ public class ProtoParserTest {
     }
 
     /**
-     * Test for error handling in load method.
-     * Verifies that the method throws a RuntimeException when there is an error parsing the input stream.
+     * Test for error handling in load method. Verifies that the method throws a RuntimeException
+     * when there is an error parsing the input stream.
      */
     @Test(expected = RuntimeException.class)
     public void testLoadErrorHandling() {

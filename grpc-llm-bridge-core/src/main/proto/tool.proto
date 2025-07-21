@@ -31,11 +31,25 @@ message TooCallMethodDescriptor {
   google.protobuf.MethodOptions methodOptions = 9;
 }
 
-message ToolGroupSet {
+message BridgeToolGroupSet {
   google.protobuf.FileDescriptorSet allDependencies = 1;
-
+  repeated BridgeToolGroup groups = 2;
 }
 
-message ToolGroup {
+message BridgeToolGroup {
+  string name = 1;
+  repeated BridgeTool tools = 2;
+}
 
+message BridgeTool {
+  repeated string tags = 1;
+  string filename = 2;
+  string serviceName = 3;
+  string methodName = 4;
+}
+
+message PublishService {
+  string target = 1;
+  BridgeToolGroupSet groups = 2;
+  map<string, string> serviceOptions = 3;
 }

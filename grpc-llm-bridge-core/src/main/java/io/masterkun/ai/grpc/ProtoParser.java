@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Utility class for parsing, loading, and saving Protocol Buffer descriptors.
- * Provides functionality to convert between different Protocol Buffer descriptor formats
- * and handle dependencies between Protocol Buffer files.
+ * Utility class for parsing, loading, and saving Protocol Buffer descriptors. Provides
+ * functionality to convert between different Protocol Buffer descriptor formats and handle
+ * dependencies between Protocol Buffer files.
  */
 public class ProtoParser {
 
@@ -34,8 +34,8 @@ public class ProtoParser {
     }
 
     /**
-     * Loads Protocol Buffer descriptors from a FileDescriptorSet.
-     * Resolves all dependencies between the file descriptors.
+     * Loads Protocol Buffer descriptors from a FileDescriptorSet. Resolves all dependencies between
+     * the file descriptors.
      *
      * @param fileDescriptorSet The FileDescriptorSet containing file descriptor protos
      * @return A map of file names to their corresponding FileDescriptors
@@ -50,14 +50,15 @@ public class ProtoParser {
     }
 
     /**
-     * Saves a list of FileDescriptors to an output stream.
-     * Converts the FileDescriptors to a FileDescriptorSet and writes it to the output stream.
+     * Saves a list of FileDescriptors to an output stream. Converts the FileDescriptors to a
+     * FileDescriptorSet and writes it to the output stream.
      *
      * @param fileDescriptors The list of FileDescriptors to save
-     * @param outputStream The output stream to write to
+     * @param outputStream    The output stream to write to
      * @throws RuntimeException If there is an error writing to the output stream
      */
-    public static void save(List<Descriptors.FileDescriptor> fileDescriptors, OutputStream outputStream) {
+    public static void save(List<Descriptors.FileDescriptor> fileDescriptors,
+                            OutputStream outputStream) {
         try {
             save(fileDescriptors).writeTo(outputStream);
         } catch (Exception e) {
@@ -66,13 +67,13 @@ public class ProtoParser {
     }
 
     /**
-     * Converts a list of FileDescriptors to a FileDescriptorSet.
-     * Includes all dependencies of the provided FileDescriptors.
+     * Converts a list of FileDescriptors to a FileDescriptorSet. Includes all dependencies of the
+     * provided FileDescriptors.
      *
      * @param fileDescriptors The list of FileDescriptors to convert
      * @return A FileDescriptorSet containing all the FileDescriptorProtos
      */
-    public static DescriptorProtos.FileDescriptorSet save(List<Descriptors.FileDescriptor> fileDescriptors) {
+    public static DescriptorProtos.FileDescriptorSet save(Iterable<Descriptors.FileDescriptor> fileDescriptors) {
         Map<String, DescriptorProtos.FileDescriptorProto> map = new LinkedHashMap<>();
         saveFileDescriptor(fileDescriptors, map);
         return DescriptorProtos.FileDescriptorSet.newBuilder()
@@ -120,8 +121,8 @@ public class ProtoParser {
         }
     }
 
-    private static void saveFileDescriptor(List<Descriptors.FileDescriptor> fileDescriptors,
-                                          Map<String, DescriptorProtos.FileDescriptorProto> map) {
+    private static void saveFileDescriptor(Iterable<Descriptors.FileDescriptor> fileDescriptors,
+                                           Map<String, DescriptorProtos.FileDescriptorProto> map) {
         for (Descriptors.FileDescriptor fileDescriptor : fileDescriptors) {
             saveFileDescriptor(fileDescriptor.getDependencies(), map);
             if (map.containsKey(fileDescriptor.getName())) {

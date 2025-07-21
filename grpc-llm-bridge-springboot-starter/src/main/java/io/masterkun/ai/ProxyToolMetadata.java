@@ -4,9 +4,9 @@ import io.masterkun.ai.tool.BridgeToolMetadata;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
 /**
- * Adapter class that bridges between MCP BridgeToolMetadata and Spring AI ToolMetadata.
- * This class wraps a BridgeToolMetadata instance and implements the Spring AI ToolMetadata interface,
- * allowing MCP bridge tool metadata to be used within the Spring AI framework.
+ * Adapter class that bridges between MCP BridgeToolMetadata and Spring AI ToolMetadata. This class
+ * wraps a BridgeToolMetadata instance and implements the Spring AI ToolMetadata interface, allowing
+ * MCP bridge tool metadata to be used within the Spring AI framework.
  */
 public class ProxyToolMetadata implements ToolMetadata {
     private final BridgeToolMetadata delegate;

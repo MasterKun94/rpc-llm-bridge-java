@@ -1,4 +1,4 @@
-package io.masterkun.ai;
+package io.masterkun.example;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;

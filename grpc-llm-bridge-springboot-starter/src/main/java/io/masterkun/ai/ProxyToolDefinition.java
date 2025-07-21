@@ -5,9 +5,9 @@ import jakarta.annotation.Nonnull;
 import org.springframework.ai.tool.definition.ToolDefinition;
 
 /**
- * Adapter class that bridges between MCP BridgeToolDefinition and Spring AI ToolDefinition.
- * This class wraps a BridgeToolDefinition instance and implements the Spring AI ToolDefinition interface,
- * allowing MCP bridge tool definitions to be used within the Spring AI framework.
+ * Adapter class that bridges between MCP BridgeToolDefinition and Spring AI ToolDefinition. This
+ * class wraps a BridgeToolDefinition instance and implements the Spring AI ToolDefinition
+ * interface, allowing MCP bridge tool definitions to be used within the Spring AI framework.
  */
 public class ProxyToolDefinition implements ToolDefinition {
     private final BridgeToolDefinition<?> delegate;
@@ -22,8 +22,7 @@ public class ProxyToolDefinition implements ToolDefinition {
     }
 
     /**
-     * Returns the name of the tool.
-     * Delegates to the wrapped BridgeToolDefinition.
+     * Returns the name of the tool. Delegates to the wrapped BridgeToolDefinition.
      *
      * @return The tool name
      */
@@ -34,8 +33,7 @@ public class ProxyToolDefinition implements ToolDefinition {
     }
 
     /**
-     * Returns the description of the tool.
-     * Delegates to the wrapped BridgeToolDefinition.
+     * Returns the description of the tool. Delegates to the wrapped BridgeToolDefinition.
      *
      * @return The tool description
      */
@@ -46,8 +44,7 @@ public class ProxyToolDefinition implements ToolDefinition {
     }
 
     /**
-     * Returns the schema for the tool's input.
-     * Delegates to the wrapped BridgeToolDefinition.
+     * Returns the schema for the tool's input. Delegates to the wrapped BridgeToolDefinition.
      *
      * @return The input schema as a string
      */

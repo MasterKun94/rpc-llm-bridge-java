@@ -27,8 +27,7 @@
 
         <dependency>
             <groupId>io.masterkun.ai</groupId>
-            <artifactId>example-grpc-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>example-commons</artifactId>
         </dependency>
     </dependencies>
 

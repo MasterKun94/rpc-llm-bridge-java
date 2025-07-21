@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 /**
- * REST controller that provides an endpoint for interacting with an AI model.
- * This controller demonstrates how to use the MCP client to communicate with the AI model
- * and how to configure the ChatClient with various options.
+ * REST controller that provides an endpoint for interacting with an AI model. This controller
+ * demonstrates how to use the MCP client to communicate with the AI model and how to configure the
+ * ChatClient with various options.
  */
 @RestController
 @RequestMapping("/client")
-public class Controller {
+public class ExampleController {
 
     private final ChatClient chatClient;
 
@@ -31,9 +31,9 @@ public class Controller {
      * Constructor that configures the ChatClient with various options.
      *
      * @param chatModel The AI chat model to use
-     * @param tools The tool callbacks provider for MCP tools
+     * @param tools     The tool callbacks provider for MCP tools
      */
-    public Controller(ChatModel chatModel, ToolCallbackProvider tools) {
+    public ExampleController(ChatModel chatModel, ToolCallbackProvider tools) {
 
         this.chatModel = chatModel;
 
@@ -63,7 +63,7 @@ public class Controller {
     /**
      * Endpoint for streaming chat responses from the AI model.
      *
-     * @param query The user's query to send to the AI model
+     * @param query    The user's query to send to the AI model
      * @param response The HTTP response object
      * @return A stream of text responses from the AI model
      */

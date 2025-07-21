@@ -1,4 +1,4 @@
-package example;
+package io.masterkun.example;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,9 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 /**
- * MCP Gateway application that exposes gRPC services as MCP tools.
- * This application connects to the example gRPC service and registers
- * its methods as MCP tools that can be called by AI models.
+ * MCP Gateway application that exposes gRPC services as MCP tools. This application connects to the
+ * example gRPC service and registers its methods as MCP tools that can be called by AI models.
  */
 @SpringBootApplication
 public class ExampleGrpcBridgeApplication {
