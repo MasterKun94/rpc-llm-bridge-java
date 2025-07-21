@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>io.masterkun.ai</groupId>
-            <artifactId>grpc-llm-bridge-springboot-starter</artifactId>
+            <artifactId>rpc-llm-bridge-springboot-starter</artifactId>
         </dependency>
 
         <dependency>

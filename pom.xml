@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.masterkun.ai</groupId>
-    <artifactId>grpc-llm-bridge-java</artifactId>
+    <artifactId>rpc-llm-bridge-java</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>grpc-llm-bridge-springboot-starter</module>
-        <module>grpc-llm-bridge-testkit</module>
-        <module>grpc-llm-bridge-core</module>
+        <module>rpc-llm-bridge-springboot-starter</module>
+        <module>rpc-llm-bridge-testkit</module>
+        <module>rpc-llm-bridge-core</module>
         <module>example/mcp-example</module>
         <module>example/tooluse-example</module>
         <module>example/example-commons</module>
@@ -34,17 +34,17 @@
         <dependencies>
             <dependency>
                 <groupId>io.masterkun.ai</groupId>
-                <artifactId>grpc-llm-bridge-core</artifactId>
+                <artifactId>rpc-llm-bridge-core</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.masterkun.ai</groupId>
-                <artifactId>grpc-llm-bridge-springboot-starter</artifactId>
+                <artifactId>rpc-llm-bridge-springboot-starter</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.masterkun.ai</groupId>
-                <artifactId>grpc-llm-bridge-testkit</artifactId>
+                <artifactId>rpc-llm-bridge-testkit</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
