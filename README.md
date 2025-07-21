@@ -95,7 +95,7 @@ BridgeToolCallback<?> callback = new GrpcBridgeToolCallback<>(
 
 3. **example-client-springboot**：通过大模型调用 MCP 服务的 Spring Boot 应用
 
-详细的示例使用说明请参考 [example/README.md](example/README.md)。
+详细的示例使用说明请参考 [example/README.md](example/mcp-example/README.md)。
 
 ## 工作原理
 

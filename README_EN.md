@@ -95,7 +95,7 @@ The project includes a complete example demonstrating how to convert a gRPC serv
 
 3. **example-client-springboot**: A Spring Boot application that calls the MCP service through a large language model
 
-For detailed example usage instructions, please refer to [example/README.md](example/README.md).
+For detailed example usage instructions, please refer to [example/README.md](example/mcp-example/README.md).
 
 ## How It Works
 

@@ -13,9 +13,7 @@
         <module>grpc-llm-bridge-springboot-starter</module>
         <module>grpc-llm-bridge-testkit</module>
         <module>grpc-llm-bridge-core</module>
-        <module>example/example-grpc-service</module>
-        <module>example/mcp-server-grpc-bridge</module>
-        <module>example/mcp-client</module>
+        <module>example/mcp-example</module>
     </modules>
 
     <properties>

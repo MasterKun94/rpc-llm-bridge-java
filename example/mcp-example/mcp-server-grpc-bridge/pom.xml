@@ -5,12 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.masterkun.ai</groupId>
-        <artifactId>grpc-llm-bridge-java</artifactId>
+        <artifactId>mcp-example</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>grpc-bridge-mcp-server</artifactId>
+    <artifactId>mcp-server-grpc-bridge</artifactId>
 
     <dependencies>
         <dependency>
