@@ -10,7 +10,7 @@ import com.google.protobuf.MapEntry;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
-import io.masterkun.mcp.proto.McpProto;
+import io.masterkun.ai.proto.ToolProto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,14 +140,14 @@ public class ProtoUtils {
         ObjectNode fieldNode = objectMapper.createObjectNode();
 
         // Add description if available
-        if (field.getOptions().hasExtension(McpProto.fieldDesc)) {
-            String description = field.getOptions().getExtension(McpProto.fieldDesc);
+        if (field.getOptions().hasExtension(ToolProto.fieldDesc)) {
+            String description = field.getOptions().getExtension(ToolProto.fieldDesc);
             fieldNode.put("description", description);
         }
 
         // Check if field is required
-        if (field.getOptions().hasExtension(McpProto.fieldRequired) &&
-            field.getOptions().getExtension(McpProto.fieldRequired) && !isOneOf) {
+        if (field.getOptions().hasExtension(ToolProto.fieldRequired) &&
+            field.getOptions().getExtension(ToolProto.fieldRequired) && !isOneOf) {
             requiredArray.add(field.getName());
         }
 
@@ -300,8 +300,8 @@ public class ProtoUtils {
                     first = false;
                 }
                 formatLevel(level, builder, formatLevel);
-                String name = field.getOptions().hasExtension(McpProto.fieldDesc) ?
-                        field.getOptions().getExtension(McpProto.fieldDesc) :
+                String name = field.getOptions().hasExtension(ToolProto.fieldDesc) ?
+                        field.getOptions().getExtension(ToolProto.fieldDesc) :
                         field.getName();
                 builder.append(name).append(": ");
                 formatTo(value, builder, level, formatLevel);

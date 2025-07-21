@@ -2,7 +2,7 @@ package io.masterkun.ai.grpc;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
-import io.masterkun.mcp.proto.ForTestProto;
+import io.masterkun.tool.proto.ForTestProto;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

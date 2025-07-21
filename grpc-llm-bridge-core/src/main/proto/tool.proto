@@ -1,7 +1,7 @@
 syntax = "proto3";
-option java_package = "io.masterkun.mcp.proto";
-option java_outer_classname = "McpProto";
-package io.masterkun.mcp;
+option java_package = "io.masterkun.ai.proto";
+option java_outer_classname = "ToolProto";
+package io.masterkun.tool;
 
 import "google/protobuf/descriptor.proto";
 
@@ -31,3 +31,11 @@ message TooCallMethodDescriptor {
   google.protobuf.MethodOptions methodOptions = 9;
 }
 
+message ToolGroupSet {
+  google.protobuf.FileDescriptorSet allDependencies = 1;
+
+}
+
+message ToolGroup {
+
+}

@@ -5,7 +5,7 @@ import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.Message;
 import io.grpc.MethodDescriptor;
 import io.grpc.protobuf.ProtoMethodDescriptorSupplier;
-import io.masterkun.mcp.proto.McpProto;
+import io.masterkun.ai.proto.ToolProto;
 
 import javax.annotation.Nullable;
 
@@ -59,8 +59,8 @@ public class GrpcUtils {
      */
     @Nullable
     public static String getMethodDesc(GrpcBridgeMethodDescriptor descriptor) {
-        if (descriptor.getOptions().hasExtension(McpProto.methodDesc)) {
-            return descriptor.getOptions().getExtension(McpProto.methodDesc);
+        if (descriptor.getOptions().hasExtension(ToolProto.methodDesc)) {
+            return descriptor.getOptions().getExtension(ToolProto.methodDesc);
         }
         return null;
     }
@@ -85,8 +85,8 @@ public class GrpcUtils {
      * @return The method name
      */
     public static String getMethodName(GrpcBridgeMethodDescriptor descriptor) {
-        if (descriptor.getOptions().hasExtension(McpProto.methodName)) {
-            return descriptor.getOptions().getExtension(McpProto.methodName);
+        if (descriptor.getOptions().hasExtension(ToolProto.methodName)) {
+            return descriptor.getOptions().getExtension(ToolProto.methodName);
         }
         return descriptor.getServiceName() + "." + descriptor.getMethodName();
     }
