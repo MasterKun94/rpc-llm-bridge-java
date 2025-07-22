@@ -4,7 +4,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.masterkun.ai.grpc.GrpcBridgeToolCallback;
 import io.masterkun.ai.tool.BridgeToolCallback;
-import io.masterkun.tool.proto.ExampleServiceGrpc;
+import io.masterkun.toolcall.proto.ExampleServiceGrpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

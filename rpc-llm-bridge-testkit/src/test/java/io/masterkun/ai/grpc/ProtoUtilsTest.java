@@ -8,7 +8,7 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.DynamicMessage;
-import io.masterkun.tool.proto.ForTestProto;
+import io.masterkun.toolcall.proto.ForTestProto;
 import org.junit.Test;
 
 import java.util.Arrays;

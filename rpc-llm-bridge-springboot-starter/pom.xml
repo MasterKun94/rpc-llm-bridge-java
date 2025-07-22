@@ -29,6 +29,10 @@
             <groupId>io.masterkun.ai</groupId>
             <artifactId>rpc-llm-bridge-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.masterkun.ai</groupId>
+            <artifactId>rpc-llm-bridge-grpc</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

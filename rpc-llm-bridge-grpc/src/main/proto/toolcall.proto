@@ -1,9 +1,14 @@
 syntax = "proto3";
 option java_package = "io.masterkun.ai.proto";
 option java_outer_classname = "ToolProto";
-package io.masterkun.tool;
+package io.masterkun.toolcall;
 
 import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FileOptions {
+  // 标识文件下的服务可自动注册为工具
+  optional bool file_auto_discovery = 14191;
+}
 
 extend google.protobuf.FieldOptions {
   // 字段是否必填
@@ -12,23 +17,18 @@ extend google.protobuf.FieldOptions {
   optional string field_desc = 14193;
 }
 
+extend google.protobuf.ServiceOptions {
+  // 标识服务下的方法可自动注册为工具
+  optional bool service_auto_discovery = 14191;
+}
+
 extend google.protobuf.MethodOptions {
+  // 标识方法可自动注册为工具
+  optional bool method_auto_discovery = 14191;
   // mcp方法调用名称，如果为空则使用rpc方法名
   optional string method_name = 14192;
   // mcp方法说明
   optional string method_desc = 14193;
-}
-
-message TooCallMethodDescriptor {
-  string fullMethodName = 1;
-  bool clientStreaming = 2;
-  bool serverStreaming = 3;
-  google.protobuf.DescriptorProto inputType = 4;
-  google.protobuf.DescriptorProto outputType = 5;
-  bool idempotent = 6;
-  bool safe = 7;
-  bool sampledToLocalTracing = 8;
-  google.protobuf.MethodOptions methodOptions = 9;
 }
 
 message BridgeToolGroupSet {

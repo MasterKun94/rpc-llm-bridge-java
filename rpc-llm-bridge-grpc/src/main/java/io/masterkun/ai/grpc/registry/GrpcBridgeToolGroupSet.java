@@ -1,8 +1,10 @@
 package io.masterkun.ai.grpc.registry;
 
 import com.google.protobuf.Descriptors;
-import io.masterkun.ai.grpc.ProtoParser;
+import io.grpc.reflection.v1.ServerReflectionGrpc;
+import io.masterkun.ai.grpc.ProtoUtils;
 import io.masterkun.ai.proto.ToolProto;
+import io.masterkun.ai.registry.BridgeToolChannelHolder;
 import io.masterkun.ai.registry.BridgeToolGroupSet;
 
 import java.io.IOException;
@@ -14,7 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeToolGroup> {
+public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeToolGroup,
+        GrpcBridgeToolChannel> {
     private final Map<String, GrpcBridgeToolGroup> groups = new LinkedHashMap<>();
 
     @Override
@@ -67,7 +70,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
 
     public void reload(ToolProto.BridgeToolGroupSet proto) throws IOException {
         Map<String, Descriptors.FileDescriptor> allDependencies =
-                ProtoParser.load(proto.getAllDependencies());
+                ProtoUtils.load(proto.getAllDependencies());
         groups.clear();
         for (ToolProto.BridgeToolGroup group : proto.getGroupsList()) {
             String name = group.getName();
@@ -100,6 +103,12 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
         proto.writeTo(outputStream);
     }
 
+    @Override
+    public void reload(BridgeToolChannelHolder<GrpcBridgeToolChannel> channelHolder) {
+        ServerReflectionGrpc.ServerReflectionBlockingV2Stub stub =
+                ServerReflectionGrpc.newBlockingV2Stub(channelHolder.get().channel());
+    }
+
     public ToolProto.BridgeToolGroupSet save() throws IOException {
         ToolProto.BridgeToolGroupSet.Builder builder = ToolProto.BridgeToolGroupSet.newBuilder();
         for (GrpcBridgeToolGroup group : groups.values()) {
@@ -125,6 +134,6 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                     m1.putAll(m2);
                     return m1;
                 });
-        return builder.setAllDependencies(ProtoParser.save(reduce.values())).build();
+        return builder.setAllDependencies(ProtoUtils.save(reduce.values())).build();
     }
 }

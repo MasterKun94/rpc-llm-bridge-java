@@ -2,7 +2,7 @@ package io.masterkun.ai.grpc;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
-import io.masterkun.tool.proto.ForTestProto;
+import io.masterkun.toolcall.proto.ForTestProto;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -18,13 +18,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Unit tests for {@link ProtoParser} class. Tests verify that the methods work as described in
- * their documentation.
+ * Unit tests for {@link ProtoUtils} class. Tests verify that the methods work as described in their
+ * documentation.
  */
 public class ProtoParserTest {
 
     /**
-     * Test for {@link ProtoParser#load(java.io.InputStream)}. Verifies that the method correctly
+     * Test for {@link ProtoUtils#load(java.io.InputStream)}. Verifies that the method correctly
      * loads Protocol Buffer descriptors from an input stream.
      */
     @Test
@@ -34,7 +34,7 @@ public class ProtoParserTest {
         List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         fileDescriptors.add(fileDescriptor);
 
-        DescriptorProtos.FileDescriptorSet fileDescriptorSet = ProtoParser.save(fileDescriptors);
+        DescriptorProtos.FileDescriptorSet fileDescriptorSet = ProtoUtils.save(fileDescriptors);
 
         // Write to a byte array
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -44,7 +44,7 @@ public class ProtoParserTest {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
         // Load the descriptors
-        Map<String, Descriptors.FileDescriptor> loadedDescriptors = ProtoParser.load(inputStream);
+        Map<String, Descriptors.FileDescriptor> loadedDescriptors = ProtoUtils.load(inputStream);
 
         // Verify the result
         assertNotNull("Loaded descriptors should not be null", loadedDescriptors);
@@ -57,7 +57,7 @@ public class ProtoParserTest {
     }
 
     /**
-     * Test for {@link ProtoParser#load(com.google.protobuf.DescriptorProtos.FileDescriptorSet)}.
+     * Test for {@link ProtoUtils#load(com.google.protobuf.DescriptorProtos.FileDescriptorSet)}.
      * Verifies that the method correctly loads Protocol Buffer descriptors from a FileDescriptorSet
      * and resolves all dependencies between the file descriptors.
      */
@@ -68,11 +68,11 @@ public class ProtoParserTest {
         List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         fileDescriptors.add(fileDescriptor);
 
-        DescriptorProtos.FileDescriptorSet fileDescriptorSet = ProtoParser.save(fileDescriptors);
+        DescriptorProtos.FileDescriptorSet fileDescriptorSet = ProtoUtils.save(fileDescriptors);
 
         // Load the descriptors
         Map<String, Descriptors.FileDescriptor> loadedDescriptors =
-                ProtoParser.load(fileDescriptorSet);
+                ProtoUtils.load(fileDescriptorSet);
 
         // Verify the result
         assertNotNull("Loaded descriptors should not be null", loadedDescriptors);
@@ -93,7 +93,7 @@ public class ProtoParserTest {
     }
 
     /**
-     * Test for {@link ProtoParser#save(java.util.List, java.io.OutputStream)}. Verifies that the
+     * Test for {@link ProtoUtils#save(java.util.List, java.io.OutputStream)}. Verifies that the
      * method correctly saves a list of FileDescriptors to an output stream.
      */
     @Test
@@ -105,7 +105,7 @@ public class ProtoParserTest {
 
         // Save to a byte array
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ProtoParser.save(fileDescriptors, outputStream);
+        ProtoUtils.save(fileDescriptors, outputStream);
 
         // Verify the result
         byte[] bytes = outputStream.toByteArray();
@@ -130,9 +130,9 @@ public class ProtoParserTest {
     }
 
     /**
-     * Test for {@link ProtoParser#save(java.util.List)}. Verifies that the method correctly
-     * converts a list of FileDescriptors to a FileDescriptorSet and includes all dependencies of
-     * the provided FileDescriptors.
+     * Test for {@link ProtoUtils#save(Iterable)}. Verifies that the method correctly converts a
+     * list of FileDescriptors to a FileDescriptorSet and includes all dependencies of the provided
+     * FileDescriptors.
      */
     @Test
     public void testSaveToFileDescriptorSet() {
@@ -142,7 +142,7 @@ public class ProtoParserTest {
         fileDescriptors.add(fileDescriptor);
 
         // Save to a FileDescriptorSet
-        DescriptorProtos.FileDescriptorSet fileDescriptorSet = ProtoParser.save(fileDescriptors);
+        DescriptorProtos.FileDescriptorSet fileDescriptorSet = ProtoUtils.save(fileDescriptors);
 
         // Verify the result
         assertNotNull("FileDescriptorSet should not be null", fileDescriptorSet);
@@ -185,11 +185,11 @@ public class ProtoParserTest {
 
         // Save to a byte array
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ProtoParser.save(fileDescriptors, outputStream);
+        ProtoUtils.save(fileDescriptors, outputStream);
 
         // Load from the byte array
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        Map<String, Descriptors.FileDescriptor> loadedDescriptors = ProtoParser.load(inputStream);
+        Map<String, Descriptors.FileDescriptor> loadedDescriptors = ProtoUtils.load(inputStream);
 
         // Verify the result
         assertNotNull("Loaded descriptors should not be null", loadedDescriptors);
@@ -221,6 +221,6 @@ public class ProtoParserTest {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(invalidBytes);
 
         // This should throw a RuntimeException
-        ProtoParser.load(inputStream);
+        ProtoUtils.load(inputStream);
     }
 }

@@ -1,8 +1,8 @@
 package io.masterkun.example;
 
 import io.grpc.stub.StreamObserver;
-import io.masterkun.tool.proto.ExampleProto;
-import io.masterkun.tool.proto.ExampleServiceGrpc;
+import io.masterkun.toolcall.proto.ExampleProto;
+import io.masterkun.toolcall.proto.ExampleServiceGrpc;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

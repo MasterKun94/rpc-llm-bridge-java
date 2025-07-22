@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public interface BridgeToolGroupSet<T extends BridgeToolGroup<?>> {
+public interface BridgeToolGroupSet<T extends BridgeToolGroup<?>, C extends BridgeToolChannel> {
     List<T> getGroups();
 
     void addGroup(T group);
@@ -21,4 +21,6 @@ public interface BridgeToolGroupSet<T extends BridgeToolGroup<?>> {
     void reload(InputStream inputStream) throws IOException;
 
     void save(OutputStream outputStream) throws IOException;
+
+    void reload(BridgeToolChannelHolder<C> channelHolder);
 }

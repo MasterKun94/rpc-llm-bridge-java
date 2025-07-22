@@ -1,8 +1,8 @@
 package io.masterkun;
 
 import io.masterkun.ai.grpc.ProtoUtils;
-import io.masterkun.tool.proto.ForTestProto;
-import io.masterkun.tool.proto.ForTestServiceGrpc;
+import io.masterkun.toolcall.proto.ForTestProto;
+import io.masterkun.toolcall.proto.ForTestServiceGrpc;
 
 public class TestMain {
     public static void main(String[] args) {

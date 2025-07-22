@@ -1,24 +1,26 @@
 syntax = "proto3";
-option java_package = "io.masterkun.tool.proto";
+option java_package = "io.masterkun.toolcall.proto";
 option java_outer_classname = "ForTestProto";
 option java_generate_equals_and_hash = true;
 package io.masterkun.tool;
 
-import "tool.proto";
+import "toolcall.proto";
+
+option (toolcall.file_auto_discovery) = true;
 
 // 用于测试的proto文件
 
 message TestReq {
-  string message = 1 [(tool.field_desc) = "请求内容", (tool.field_required) = true];
+  string message = 1 [(toolcall.field_desc) = "请求内容", (toolcall.field_required) = true];
   oneof elem {
-    Elem1 elem1 = 2 [(tool.field_desc) = "请求元素1", (tool.field_required) = true];
-    Elem2 elem2 = 3 [(tool.field_desc) = "请求元素2", (tool.field_required) = true];
+    Elem1 elem1 = 2 [(toolcall.field_desc) = "请求元素1", (toolcall.field_required) = true];
+    Elem2 elem2 = 3 [(toolcall.field_desc) = "请求元素2", (toolcall.field_required) = true];
   }
-  map<string, int32> map1 = 4 [(tool.field_desc) = "MAP1"];
-  map<int32, bytes> map2 = 5 [(tool.field_desc) = "MAP2"];
-  map<string, Elem3> map3 = 8 [(tool.field_desc) = "MAP3"];
-  repeated string list = 6 [(tool.field_desc) = "LIST", (tool.field_required) = true];
-  repeated Elem1 elems = 7 [(tool.field_desc) = "ELEMS"];
+  map<string, int32> map1 = 4 [(toolcall.field_desc) = "MAP1"];
+  map<int32, bytes> map2 = 5 [(toolcall.field_desc) = "MAP2"];
+  map<string, Elem3> map3 = 8 [(toolcall.field_desc) = "MAP3"];
+  repeated string list = 6 [(toolcall.field_desc) = "LIST", (toolcall.field_required) = true];
+  repeated Elem1 elems = 7 [(toolcall.field_desc) = "ELEMS"];
 }
 
 enum TestEnum {
@@ -28,15 +30,15 @@ enum TestEnum {
 }
 
 message Elem1 {
-  int32 a1 = 1 [(tool.field_desc) = "字段a1"];
-  bool a2 = 2 [(tool.field_desc) = "字段a2"];
-  bytes a3 = 3 [(tool.field_desc) = "字段a3", (tool.field_required) = true];
+  int32 a1 = 1 [(toolcall.field_desc) = "字段a1"];
+  bool a2 = 2 [(toolcall.field_desc) = "字段a2"];
+  bytes a3 = 3 [(toolcall.field_desc) = "字段a3", (toolcall.field_required) = true];
 }
 
 message Elem2 {
-  int32 b1 = 1 [(tool.field_desc) = "字段b1"];
-  bool b2 = 2 [(tool.field_desc) = "字段b2"];
-  bytes b3 = 3 [(tool.field_desc) = "字段b3"];
+  int32 b1 = 1 [(toolcall.field_desc) = "字段b1"];
+  bool b2 = 2 [(toolcall.field_desc) = "字段b2"];
+  bytes b3 = 3 [(toolcall.field_desc) = "字段b3"];
 }
 
 message Elem3 {
@@ -49,10 +51,10 @@ message Elem3 {
 }
 
 message TestRes {
-  string message = 1 [(tool.field_desc) = "返回结果"];
+  string message = 1 [(toolcall.field_desc) = "返回结果"];
   oneof elem {
-    Elem1 elem1 = 2 [(tool.field_desc) = "返回元素1"];
-    Elem2 elem2 = 3 [(tool.field_desc) = "返回元素2"];
+    Elem1 elem1 = 2 [(toolcall.field_desc) = "返回元素1"];
+    Elem2 elem2 = 3 [(toolcall.field_desc) = "返回元素2"];
   }
 }
 
@@ -65,6 +67,6 @@ service ForTestService {
 
 
   rpc testGet(TestReq) returns (TestRes) {
-    option (tool.method_desc) = "测试方法";
+    option (toolcall.method_desc) = "测试方法";
   }
 }
