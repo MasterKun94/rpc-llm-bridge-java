@@ -2,7 +2,7 @@ syntax = "proto3";
 option java_package = "io.masterkun.toolcall.proto";
 option java_outer_classname = "ForTestProto";
 option java_generate_equals_and_hash = true;
-package io.masterkun.tool;
+package io.masterkun.test;
 
 import "toolcall.proto";
 

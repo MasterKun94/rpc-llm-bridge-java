@@ -1,0 +1,59 @@
+syntax = "proto3";
+option java_package = "io.masterkun.toolcall.proto";
+option java_outer_classname = "TestDiscovery2Proto";
+option java_generate_equals_and_hash = true;
+package io.masterkun.test;
+
+import "toolcall.proto";
+
+message Req2 {
+  string id = 1;
+}
+message Res2 {
+  int64 value = 1;
+}
+
+service TestDiscovery2Service {
+
+  rpc test1(Req2) returns (Res2) {
+    option (toolcall.method_auto_discovery) = true;
+  }
+
+  rpc test2(Req2) returns (Res2) {
+    option (toolcall.method_auto_discovery) = false;
+  }
+
+  rpc test3(Req2) returns (Res2) {
+  }
+}
+
+service TestDiscovery2Service2 {
+  option (toolcall.service_auto_discovery) = true;
+
+  rpc test1(Req2) returns (Res2) {
+    option (toolcall.method_auto_discovery) = true;
+  }
+
+  rpc test2(Req2) returns (Res2) {
+    option (toolcall.method_auto_discovery) = false;
+  }
+
+  rpc test3(Req2) returns (Res2) {
+  }
+}
+
+
+service TestDiscovery2Service3 {
+  option (toolcall.service_auto_discovery) = false;
+
+  rpc test1(Req2) returns (Res2) {
+    option (toolcall.method_auto_discovery) = true;
+  }
+
+  rpc test2(Req2) returns (Res2) {
+    option (toolcall.method_auto_discovery) = false;
+  }
+
+  rpc test3(Req2) returns (Res2) {
+  }
+}

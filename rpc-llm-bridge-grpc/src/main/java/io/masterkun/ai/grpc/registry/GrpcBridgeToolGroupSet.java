@@ -247,11 +247,12 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
      */
     public void reloadByAutoDiscovery(Set<String> services,
                                       Map<String, Descriptors.FileDescriptor> fileDescriptors) {
+        groups.clear();
         // Iterate through all file descriptors to check for auto-discovery settings
         for (Descriptors.FileDescriptor file : fileDescriptors.values()) {
             DescriptorProtos.FileOptions fileOpt = file.getOptions();
             Boolean fileEnabled = fileOpt.hasExtension(ToolProto.fileAutoDiscovery) ?
-                    null : fileOpt.getExtension(ToolProto.fileAutoDiscovery);
+                    fileOpt.getExtension(ToolProto.fileAutoDiscovery) : null;
 
             // Process each service in the file
             for (ServiceDescriptor service : file.getServices()) {
@@ -262,13 +263,11 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                 // Extract service options, group name and tags
                 DescriptorProtos.ServiceOptions serviceOpt = service.getOptions();
                 Boolean serviceEnabled = serviceOpt.hasExtension(ToolProto.serviceAutoDiscovery) ?
-                        null : serviceOpt.getExtension(ToolProto.serviceAutoDiscovery);
+                        serviceOpt.getExtension(ToolProto.serviceAutoDiscovery) : null;
                 String groupName = serviceOpt.hasExtension(ToolProto.groupName) ?
                         serviceOpt.getExtension(ToolProto.groupName) :
                         service.getFullName();
-                List<String> serviceTags = serviceOpt.hasExtension(ToolProto.serviceTags) ?
-                        serviceOpt.getExtension(ToolProto.serviceTags) :
-                        List.of();
+                List<String> serviceTags = serviceOpt.getExtension(ToolProto.serviceTags);
 
                 List<GrpcBridgeTool> tools = new ArrayList<>();
 
@@ -276,7 +275,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                 for (Descriptors.MethodDescriptor method : service.getMethods()) {
                     DescriptorProtos.MethodOptions methodOpt = method.getOptions();
                     Boolean methodEnabled = methodOpt.hasExtension(ToolProto.methodAutoDiscovery) ?
-                            null : methodOpt.getExtension(ToolProto.methodAutoDiscovery);
+                            methodOpt.getExtension(ToolProto.methodAutoDiscovery) : null;
                     /*
                      Determine if this method should be enabled as a tool based on a hierarchy of
                       settings:
@@ -292,9 +291,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                                     serviceEnabled :
                             methodEnabled;
                     if (toolEnabled) {
-                        Set<String> methodTags = methodOpt.hasExtension(ToolProto.methodTags) ?
-                                new LinkedHashSet<>(methodOpt.getExtension(ToolProto.methodTags)) :
-                                new LinkedHashSet<>();
+                        Set<String> methodTags = new LinkedHashSet<>(methodOpt.getExtension(ToolProto.methodTags));
                         methodTags.addAll(serviceTags);
                         tools.add(new GrpcBridgeTool(List.copyOf(methodTags), method));
                     }
