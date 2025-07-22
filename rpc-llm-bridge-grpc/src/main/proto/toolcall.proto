@@ -6,34 +6,67 @@ package io.masterkun.toolcall;
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.FileOptions {
-  // 标识文件下的服务可自动注册为工具
+  // Enables automatic discovery and registration of all services in this file as tools.
+  // When set to true, all services in this file will be considered for tool registration
+  // during the auto-discovery process, unless explicitly disabled at the service or method level.
+  // This is useful for quickly enabling tool registration for an entire file.
   optional bool file_auto_discovery = 14191;
 }
 
 extend google.protobuf.FieldOptions {
-  // 字段是否必填
+  // Indicates whether a field is required in requests or responses.
+  // When set to true, the field will be marked as required in the generated JSON schema,
+  // which helps clients understand which fields must be provided.
+  // This does not enforce validation at runtime - it's primarily for documentation and schema generation.
   optional bool field_required = 14192;
-  // 字段说明
+
+  // Provides a description for a field that will be included in the generated JSON schema.
+  // Use this to document the purpose, format, or constraints of a field to help API users
+  // understand how to use it correctly.
   optional string field_desc = 14193;
 }
 
 extend google.protobuf.ServiceOptions {
-  // 标识服务下的方法可自动注册为工具
+  // Enables automatic discovery and registration of all methods in this service as tools.
+  // When set to true, all methods in this service will be considered for tool registration
+  // during the auto-discovery process, unless explicitly disabled at the method level.
+  // This provides service-level control over which methods are exposed as tools.
   optional bool service_auto_discovery = 14191;
-  // 工具调用分组名称
+
+  // Specifies the name of the tool group that this service's methods will belong to.
+  // Tool groups help organize related tools together in the tool registry.
+  // If not specified, the service's full name will be used as the group name.
+  // Use this to create logical groupings of related tools across different services.
   optional string group_name = 14192;
-  // 工具标签列表
+
+  // Provides a list of tags that will be applied to all methods in this service.
+  // Tags help categorize tools and can be used for filtering or organization.
+  // Service-level tags are inherited by all methods in the service and combined with
+  // any method-specific tags.
   repeated string service_tags = 14194;
 }
 
 extend google.protobuf.MethodOptions {
-  // 标识方法可自动注册为工具
+  // Enables automatic discovery and registration of this specific method as a tool.
+  // When set to true, this method will be considered for tool registration during
+  // the auto-discovery process, regardless of service or file level settings.
+  // This provides fine-grained control over which methods are exposed as tools.
   optional bool method_auto_discovery = 14191;
-  // 工具调用名称，如果为空则使用rpc方法名
+
+  // Specifies the name of the tool as it will appear in the tool registry.
+  // This name is used to identify the tool when it's being called.
+  // If not specified, the RPC method name will be used.
+  // Use this to provide a more descriptive or user-friendly name for the tool.
   optional string method_name = 14192;
-  // 工具说明
+
+  // Provides a description of what the tool does, which will be included in
+  // the tool's metadata and documentation.
+  // A good description helps users understand the purpose and usage of the tool.
   optional string method_desc = 14193;
-  // 工具标签列表
+
+  // Provides a list of tags specific to this method.
+  // Tags help categorize tools and can be used for filtering or organization.
+  // Method-level tags are combined with any service-level tags.
   repeated string method_tags = 14194;
 }
 

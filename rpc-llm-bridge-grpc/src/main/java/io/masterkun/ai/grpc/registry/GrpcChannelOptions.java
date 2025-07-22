@@ -4,6 +4,9 @@ import io.grpc.netty.NegotiationType;
 
 import java.time.Duration;
 
+/**
+ * Configuration options for gRPC channels used in the bridge framework.
+ */
 public class GrpcChannelOptions {
     private NegotiationType negotiationType;
     private Integer maxInboundMessageSize;

@@ -5,14 +5,32 @@ import io.grpc.netty.NettyChannelBuilder;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+/**
+ * Default implementation of the GrpcChannelFactory interface that creates and configures gRPC
+ * channels.
+ */
 public class DefaultGrpcChannelFactory implements GrpcChannelFactory {
 
+    /**
+     * Creates a new gRPC channel for the specified target with the given options.
+     *
+     * @param target  The target service address
+     * @param options Configuration options for the channel
+     * @return A configured gRPC managed channel
+     */
     @Override
     public ManagedChannel create(String target, GrpcChannelOptions options) {
         NettyChannelBuilder builder = NettyChannelBuilder.forTarget(target);
         return update(builder, options).build();
     }
 
+    /**
+     * Updates a channel builder with the specified options.
+     *
+     * @param builder The channel builder to update
+     * @param options The options to apply to the builder
+     * @return The updated channel builder
+     */
     protected NettyChannelBuilder update(NettyChannelBuilder builder, GrpcChannelOptions options) {
         if (options == null) {
             return builder;
