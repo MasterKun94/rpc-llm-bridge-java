@@ -1,7 +1,7 @@
 package io.masterkun.ai.tool;
 
 /**
- * Interface for providing result converters in the MCP bridge framework. This interface acts as a
+ * Interface for providing result converters in the rpc-llm bridge framework. This interface acts as a
  * factory for creating result converter instances, allowing the framework to obtain new converters
  * when needed.
  *

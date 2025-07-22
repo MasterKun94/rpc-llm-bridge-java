@@ -1,7 +1,7 @@
 package io.masterkun.ai.tool;
 
 /**
- * Interface for providing additional metadata about tools in the MCP bridge framework. This
+ * Interface for providing additional metadata about tools in the rpc-llm bridge framework. This
  * interface allows tools to specify behavioral characteristics and processing options that affect
  * how the tool's results are handled by the framework.
  */

@@ -1,7 +1,7 @@
 package io.masterkun.ai.tool;
 
 /**
- * Interface for converting tool results to string representations in the MCP bridge framework. This
+ * Interface for converting tool results to string representations in the rpc-llm bridge framework. This
  * interface defines a conversion mechanism that transforms the native result type of a tool into a
  * string format suitable for returning to callers.
  *

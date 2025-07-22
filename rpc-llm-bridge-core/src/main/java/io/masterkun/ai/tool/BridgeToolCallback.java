@@ -1,7 +1,7 @@
 package io.masterkun.ai.tool;
 
 /**
- * Interface for tool callbacks in the MCP bridge framework. This interface defines the contract for
+ * Interface for tool callbacks in the rpc-llm bridge framework. This interface defines the contract for
  * components that can execute tool operations and return results of a specific type.
  *
  * @param <T> The type of result returned by the tool
