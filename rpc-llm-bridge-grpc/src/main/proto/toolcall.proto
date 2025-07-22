@@ -20,15 +20,21 @@ extend google.protobuf.FieldOptions {
 extend google.protobuf.ServiceOptions {
   // 标识服务下的方法可自动注册为工具
   optional bool service_auto_discovery = 14191;
+  // 工具调用分组名称
+  optional string group_name = 14192;
+  // 工具标签列表
+  repeated string service_tags = 14194;
 }
 
 extend google.protobuf.MethodOptions {
   // 标识方法可自动注册为工具
   optional bool method_auto_discovery = 14191;
-  // mcp方法调用名称，如果为空则使用rpc方法名
+  // 工具调用名称，如果为空则使用rpc方法名
   optional string method_name = 14192;
-  // mcp方法说明
+  // 工具说明
   optional string method_desc = 14193;
+  // 工具标签列表
+  repeated string method_tags = 14194;
 }
 
 message BridgeToolGroupSet {

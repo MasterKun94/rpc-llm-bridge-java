@@ -1,7 +1,13 @@
 package io.masterkun.ai.grpc.registry;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.Descriptors.ServiceDescriptor;
+import io.grpc.StatusException;
 import io.grpc.reflection.v1.ServerReflectionGrpc;
+import io.grpc.reflection.v1.ServerReflectionRequest;
+import io.grpc.reflection.v1.ServiceResponse;
 import io.masterkun.ai.grpc.ProtoUtils;
 import io.masterkun.ai.proto.ToolProto;
 import io.masterkun.ai.registry.BridgeToolChannelHolder;
@@ -9,12 +15,17 @@ import io.masterkun.ai.registry.BridgeToolGroupSet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeToolGroup,
         GrpcBridgeToolChannel> {
@@ -69,9 +80,9 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
     }
 
     public void reload(ToolProto.BridgeToolGroupSet proto) throws IOException {
+        groups.clear();
         Map<String, Descriptors.FileDescriptor> allDependencies =
                 ProtoUtils.load(proto.getAllDependencies());
-        groups.clear();
         for (ToolProto.BridgeToolGroup group : proto.getGroupsList()) {
             String name = group.getName();
             List<GrpcBridgeTool> tools = new ArrayList<>();
@@ -80,7 +91,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                 if (fileDescriptor == null) {
                     throw new IllegalArgumentException("File descriptor not found: " + tool.getFilename());
                 }
-                Descriptors.ServiceDescriptor service =
+                ServiceDescriptor service =
                         fileDescriptor.findServiceByName(tool.getServiceName());
                 if (service == null) {
                     throw new IllegalArgumentException("Service not found: " + tool.getServiceName());
@@ -104,12 +115,95 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
     }
 
     @Override
-    public void reload(BridgeToolChannelHolder<GrpcBridgeToolChannel> channelHolder) {
+    public void reloadByAutoDiscovery(BridgeToolChannelHolder<GrpcBridgeToolChannel> channelHolder) throws IOException {
         ServerReflectionGrpc.ServerReflectionBlockingV2Stub stub =
                 ServerReflectionGrpc.newBlockingV2Stub(channelHolder.get().channel());
+        try {
+
+            var call = stub.serverReflectionInfo();
+            ServerReflectionRequest req = ServerReflectionRequest.newBuilder()
+                    .setListServices("")
+                    .build();
+            if (!call.write(req)) {
+                throw new IOException("Failed to write request");
+            }
+            List<String> services = call.read().getListServicesResponse()
+                    .getServiceList()
+                    .stream()
+                    .map(ServiceResponse::getName)
+                    .collect(Collectors.toList());
+            Set<String> allServices = new HashSet<>(services);
+
+            Map<String, Descriptors.FileDescriptor> allFileDescriptors = new HashMap<>();
+            while (!services.isEmpty()) {
+                String service = services.remove(0);
+                call.write(ServerReflectionRequest.newBuilder()
+                        .setFileContainingSymbol(service)
+                        .build());
+                DescriptorProtos.FileDescriptorSet.Builder builder =
+                        DescriptorProtos.FileDescriptorSet.newBuilder();
+                for (ByteString bytes :
+                        call.read().getFileDescriptorResponse().getFileDescriptorProtoList()) {
+                    DescriptorProtos.FileDescriptorProto proto =
+                            DescriptorProtos.FileDescriptorProto.parseFrom(bytes);
+                    builder.addFile(proto);
+                }
+                Map<String, Descriptors.FileDescriptor> load = ProtoUtils.load(builder.build());
+                allFileDescriptors.putAll(load);
+                for (Descriptors.FileDescriptor value : load.values()) {
+                    for (ServiceDescriptor valueService : value.getServices()) {
+                        services.remove(valueService.getFullName());
+                    }
+                }
+            }
+            reloadByAutoDiscovery(allServices, allFileDescriptors);
+        } catch (StatusException e) {
+            throw new IOException(e);
+        } catch (InterruptedException e) {
+            throw new InterruptedIOException();
+        }
     }
 
-    public ToolProto.BridgeToolGroupSet save() throws IOException {
+    public void reloadByAutoDiscovery(Set<String> services,
+                                      Map<String, Descriptors.FileDescriptor> fileDescriptors) {
+        for (Descriptors.FileDescriptor file : fileDescriptors.values()) {
+            DescriptorProtos.FileOptions fileOpt = file.getOptions();
+            boolean fileEnabled = fileOpt.hasExtension(ToolProto.fileAutoDiscovery) &&
+                                  fileOpt.getExtension(ToolProto.fileAutoDiscovery);
+            for (ServiceDescriptor service : file.getServices()) {
+                if (!services.contains(service.getFullName())) {
+                    continue;
+                }
+                DescriptorProtos.ServiceOptions serviceOpt = service.getOptions();
+                boolean serviceEnabled = serviceOpt.hasExtension(ToolProto.serviceAutoDiscovery) &&
+                                         serviceOpt.getExtension(ToolProto.serviceAutoDiscovery);
+                String groupName = serviceOpt.hasExtension(ToolProto.groupName) ?
+                        serviceOpt.getExtension(ToolProto.groupName) :
+                        service.getFullName();
+                List<String> serviceTags = serviceOpt.hasExtension(ToolProto.serviceTags) ?
+                        serviceOpt.getExtension(ToolProto.serviceTags) :
+                        List.of();
+                List<GrpcBridgeTool> tools = new ArrayList<>();
+                for (Descriptors.MethodDescriptor method : service.getMethods()) {
+                    DescriptorProtos.MethodOptions methodOpt = method.getOptions();
+                    boolean methodEnabled = methodOpt.hasExtension(ToolProto.methodAutoDiscovery) &&
+                                            methodOpt.getExtension(ToolProto.methodAutoDiscovery);
+                    if (fileEnabled || serviceEnabled || methodEnabled) {
+                        Set<String> methodTags = methodOpt.hasExtension(ToolProto.methodTags) ?
+                                new LinkedHashSet<>(methodOpt.getExtension(ToolProto.methodTags)) :
+                                new LinkedHashSet<>();
+                        methodTags.addAll(serviceTags);
+                        tools.add(new GrpcBridgeTool(List.copyOf(methodTags), method));
+                    }
+                }
+                if (!tools.isEmpty()) {
+                    addGroup(new GrpcBridgeToolGroup(groupName, tools));
+                }
+            }
+        }
+    }
+
+    public ToolProto.BridgeToolGroupSet save() {
         ToolProto.BridgeToolGroupSet.Builder builder = ToolProto.BridgeToolGroupSet.newBuilder();
         for (GrpcBridgeToolGroup group : groups.values()) {
             ToolProto.BridgeToolGroup.Builder groupBuilder = ToolProto.BridgeToolGroup.newBuilder()

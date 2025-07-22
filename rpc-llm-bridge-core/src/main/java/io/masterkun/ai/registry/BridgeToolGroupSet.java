@@ -22,5 +22,5 @@ public interface BridgeToolGroupSet<T extends BridgeToolGroup<?>, C extends Brid
 
     void save(OutputStream outputStream) throws IOException;
 
-    void reload(BridgeToolChannelHolder<C> channelHolder);
+    void reloadByAutoDiscovery(BridgeToolChannelHolder<C> channelHolder) throws IOException;
 }
