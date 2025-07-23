@@ -13,6 +13,13 @@ import java.util.List;
  * allowing dynamic lookup of tools without requiring direct knowledge of their location.
  */
 public interface BridgeToolDiscovery {
+
+    /**
+     * Finds all tool callbacks available in the system.
+     *
+     * @return A list of all available tool callbacks
+     */
+    List<BridgeToolCallback<?>> findToolCallbacks();
     /**
      * Finds all tool callbacks belonging to the specified group.
      *

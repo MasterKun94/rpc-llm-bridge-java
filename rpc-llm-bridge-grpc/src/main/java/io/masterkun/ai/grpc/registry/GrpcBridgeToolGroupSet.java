@@ -4,6 +4,10 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Descriptors.ServiceDescriptor;
+import com.google.protobuf.ExtensionLite;
+import com.google.protobuf.ExtensionRegistryLite;
+import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.UnknownFieldSet;
 import io.grpc.StatusException;
 import io.grpc.reflection.v1.ServerReflectionGrpc;
 import io.grpc.reflection.v1.ServerReflectionRequest;
@@ -12,12 +16,15 @@ import io.masterkun.ai.grpc.ProtoUtils;
 import io.masterkun.ai.proto.ToolProto;
 import io.masterkun.ai.registry.BridgeToolChannelHolder;
 import io.masterkun.ai.registry.BridgeToolGroupSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -32,8 +39,15 @@ import java.util.stream.Collectors;
  * groups and provides functionality for discovery, loading, and saving of tool definitions.
  */
 public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeToolGroup,
-        GrpcBridgeToolChannel> {
+        GrpcBridgeToolChannel, GrpcBridgeTool> {
+    private static final Logger LOG = LoggerFactory.getLogger(GrpcBridgeToolGroupSet.class);
+
+    private final GrpcBridgeToolRegistration registration;
     private final Map<String, GrpcBridgeToolGroup> groups = new LinkedHashMap<>();
+
+    public GrpcBridgeToolGroupSet(GrpcBridgeToolRegistration registration) {
+        this.registration = registration;
+    }
 
     /**
      * Returns a list of all tool groups in this set.
@@ -53,6 +67,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
      */
     @Override
     public void addGroup(GrpcBridgeToolGroup group) {
+        LOG.info("Adding group: {}", group.name());
         if (groups.containsKey(group.name())) {
             throw new IllegalArgumentException("Group already exists: " + group.name());
         }
@@ -67,6 +82,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
      */
     @Override
     public void updateGroup(GrpcBridgeToolGroup group) {
+        LOG.info("Updating group: {}", group.name());
         if (!groups.containsKey(group.name())) {
             throw new IllegalArgumentException("Group does not exist: " + group.name());
         }
@@ -81,6 +97,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
      */
     @Override
     public void removeGroup(String name) {
+        LOG.info("Removing group: {}", name);
         if (!groups.containsKey(name)) {
             throw new IllegalArgumentException("Group does not exist: " + name);
         }
@@ -135,12 +152,14 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
      *                                  found
      */
     public void reload(ToolProto.BridgeToolGroupSet proto) throws IOException {
+        LOG.info("Reloading tool groups");
         groups.clear();
         Map<String, Descriptors.FileDescriptor> allDependencies =
                 ProtoUtils.load(proto.getAllDependencies());
         for (ToolProto.BridgeToolGroup group : proto.getGroupsList()) {
             String name = group.getName();
             List<GrpcBridgeTool> tools = new ArrayList<>();
+            GrpcBridgeToolGroup toolGroup = new GrpcBridgeToolGroup(name, tools, this);
             for (ToolProto.BridgeTool tool : group.getToolsList()) {
                 Descriptors.FileDescriptor fileDescriptor = allDependencies.get(tool.getFilename());
                 if (fileDescriptor == null) {
@@ -156,10 +175,11 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                 if (method == null) {
                     throw new IllegalArgumentException("Method not found: " + tool.getMethodName());
                 }
-                List<String> tags = List.copyOf(tool.getTagsList());
-                tools.add(new GrpcBridgeTool(tags, method));
+                Set<String> tags =
+                        Collections.unmodifiableSet(new LinkedHashSet<>(tool.getTagsList()));
+                tools.add(new GrpcBridgeTool(tags, method, toolGroup));
             }
-            addGroup(new GrpcBridgeToolGroup(name, tools));
+            addGroup(toolGroup);
         }
     }
 
@@ -185,6 +205,7 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
      */
     @Override
     public void reloadByAutoDiscovery(BridgeToolChannelHolder<GrpcBridgeToolChannel> channelHolder) throws IOException {
+        LOG.info("Reloading tool groups by auto-discovery");
         // Create a blocking stub for server reflection
         ServerReflectionGrpc.ServerReflectionBlockingV2Stub stub =
                 ServerReflectionGrpc.newBlockingV2Stub(channelHolder.get().channel());
@@ -245,14 +266,13 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
      * @param services        The set of service full names to consider for inclusion
      * @param fileDescriptors The map of file descriptors containing the services and methods
      */
-    public void reloadByAutoDiscovery(Set<String> services,
-                                      Map<String, Descriptors.FileDescriptor> fileDescriptors) {
+    void reloadByAutoDiscovery(Set<String> services,
+                               Map<String, Descriptors.FileDescriptor> fileDescriptors) {
         groups.clear();
         // Iterate through all file descriptors to check for auto-discovery settings
         for (Descriptors.FileDescriptor file : fileDescriptors.values()) {
-            DescriptorProtos.FileOptions fileOpt = file.getOptions();
-            Boolean fileEnabled = fileOpt.hasExtension(ToolProto.fileAutoDiscovery) ?
-                    fileOpt.getExtension(ToolProto.fileAutoDiscovery) : null;
+            DescriptorProtos.FileOptions fileOpt = file.toProto().getOptions();
+            Boolean fileEnabled = getEnabled(fileOpt, ToolProto.fileAutoDiscovery);
 
             // Process each service in the file
             for (ServiceDescriptor service : file.getServices()) {
@@ -261,21 +281,20 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                 }
 
                 // Extract service options, group name and tags
-                DescriptorProtos.ServiceOptions serviceOpt = service.getOptions();
-                Boolean serviceEnabled = serviceOpt.hasExtension(ToolProto.serviceAutoDiscovery) ?
-                        serviceOpt.getExtension(ToolProto.serviceAutoDiscovery) : null;
+                DescriptorProtos.ServiceOptions serviceOpt = service.toProto().getOptions();
+                Boolean serviceEnabled = getEnabled(serviceOpt, ToolProto.serviceAutoDiscovery);
                 String groupName = serviceOpt.hasExtension(ToolProto.groupName) ?
                         serviceOpt.getExtension(ToolProto.groupName) :
                         service.getFullName();
                 List<String> serviceTags = serviceOpt.getExtension(ToolProto.serviceTags);
 
                 List<GrpcBridgeTool> tools = new ArrayList<>();
+                GrpcBridgeToolGroup toolGroup = new GrpcBridgeToolGroup(groupName, tools, this);
 
                 // Examine each method to determine if it should be included as a tool
                 for (Descriptors.MethodDescriptor method : service.getMethods()) {
-                    DescriptorProtos.MethodOptions methodOpt = method.getOptions();
-                    Boolean methodEnabled = methodOpt.hasExtension(ToolProto.methodAutoDiscovery) ?
-                            methodOpt.getExtension(ToolProto.methodAutoDiscovery) : null;
+                    DescriptorProtos.MethodOptions methodOpt = method.toProto().getOptions();
+                    Boolean methodEnabled = getEnabled(methodOpt, ToolProto.methodAutoDiscovery);
                     /*
                      Determine if this method should be enabled as a tool based on a hierarchy of
                       settings:
@@ -291,18 +310,36 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                                     serviceEnabled :
                             methodEnabled;
                     if (toolEnabled) {
-                        Set<String> methodTags = new LinkedHashSet<>(methodOpt.getExtension(ToolProto.methodTags));
+                        Set<String> methodTags =
+                                new LinkedHashSet<>(methodOpt.getExtension(ToolProto.methodTags));
                         methodTags.addAll(serviceTags);
-                        tools.add(new GrpcBridgeTool(List.copyOf(methodTags), method));
+                        tools.add(new GrpcBridgeTool(Collections.unmodifiableSet(methodTags),
+                                method, toolGroup));
                     }
                 }
 
                 // Create a new tool group if tools were found
                 if (!tools.isEmpty()) {
-                    addGroup(new GrpcBridgeToolGroup(groupName, tools));
+                    addGroup(toolGroup);
                 }
             }
         }
+    }
+
+    private <T extends GeneratedMessage.ExtendableMessage<T>> Boolean getEnabled(GeneratedMessage.ExtendableMessageOrBuilder<T> msg, ExtensionLite<T, Boolean> registry) {
+        if (msg.hasExtension(registry)) {
+            return msg.getExtension(registry);
+        }
+        UnknownFieldSet unknownFields = msg.getUnknownFields();
+        if (unknownFields.hasField(registry.getNumber())) {
+            UnknownFieldSet.Field field = unknownFields.getField(registry.getNumber());
+            List<Long> varintList = field.getVarintList();
+            if (varintList != null && varintList.size() == 1) {
+                return varintList.get(0) == 1;
+            }
+            return null;
+        }
+        return null;
     }
 
     /**
@@ -337,5 +374,10 @@ public class GrpcBridgeToolGroupSet implements BridgeToolGroupSet<GrpcBridgeTool
                     return m1;
                 });
         return builder.setAllDependencies(ProtoUtils.save(reduce.values())).build();
+    }
+
+    @Override
+    public GrpcBridgeToolRegistration registration() {
+        return registration;
     }
 }

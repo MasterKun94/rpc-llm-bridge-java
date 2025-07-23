@@ -69,7 +69,7 @@ public class ProtoUtils {
      */
     public static String getJsonSchema(Descriptors.Descriptor descriptor) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = JSONUtils.OBJECT_MAPPER;
             ObjectNode schemaNode = objectMapper.createObjectNode();
 
             // Add schema metadata

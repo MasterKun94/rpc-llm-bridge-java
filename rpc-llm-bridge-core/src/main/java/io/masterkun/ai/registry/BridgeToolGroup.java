@@ -7,7 +7,7 @@ import java.util.List;
  * Tool groups provide a way to organize and categorize tools, making them easier
  * to discover and manage. Each group has a name and contains a collection of tools.
  */
-public interface BridgeToolGroup<T extends BridgeTool<?, ?>> {
+public interface BridgeToolGroup<T extends BridgeTool<?, C>, C extends BridgeToolChannel> {
 
     /**
      * Returns the name of this tool group. The name serves as a unique identifier
@@ -24,4 +24,6 @@ public interface BridgeToolGroup<T extends BridgeTool<?, ?>> {
      * @return A list of tools in this group
      */
     List<T> tools();
+
+    BridgeToolGroupSet<? extends BridgeToolGroup<T, C>, C, T> toolGroupSet();
 }

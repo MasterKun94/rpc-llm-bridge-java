@@ -9,4 +9,6 @@ package io.masterkun.ai.registry;
  * tool invocations across the bridge.
  */
 public interface BridgeToolChannel extends AutoCloseable {
+    @Override
+    void close();
 }

@@ -1,7 +1,6 @@
 package io.masterkun.ai.grpc.registry;
 
 import com.google.protobuf.Descriptors;
-import io.masterkun.ai.grpc.ProtoUtils;
 import io.masterkun.toolcall.proto.TestDiscoveryProto;
 import io.masterkun.toolcall.proto.TestDiscovery2Proto;
 import org.junit.Before;
@@ -13,7 +12,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -29,7 +27,7 @@ public class GrpcBridgeToolGroupSetTest {
 
     @Before
     public void setUp() {
-        toolGroupSet = new GrpcBridgeToolGroupSet();
+        toolGroupSet = new GrpcBridgeToolGroupSet(null);
         fileDescriptors = new HashMap<>();
         services = new HashSet<>();
 

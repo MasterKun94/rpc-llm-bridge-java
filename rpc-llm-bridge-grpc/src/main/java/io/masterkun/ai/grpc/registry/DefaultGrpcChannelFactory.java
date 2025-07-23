@@ -20,7 +20,7 @@ public class DefaultGrpcChannelFactory implements GrpcChannelFactory {
      */
     @Override
     public ManagedChannel create(String target, GrpcChannelOptions options) {
-        NettyChannelBuilder builder = NettyChannelBuilder.forTarget(target);
+        NettyChannelBuilder builder = NettyChannelBuilder.forTarget(target).usePlaintext();
         return update(builder, options).build();
     }
 

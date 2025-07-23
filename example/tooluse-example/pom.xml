@@ -15,6 +15,7 @@
 
     <modules>
         <module>tooluse-example-grpc-service</module>
+        <module>tooluse-example-caller-service</module>
     </modules>
 
 </project>

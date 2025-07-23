@@ -7,22 +7,14 @@
         <groupId>io.masterkun.ai</groupId>
         <artifactId>rpc-llm-bridge-java</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>rpc-llm-bridge-core</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>24.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-    </dependencies>
-
+    <artifactId>auto-discovery-example</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>auto-discovery-example-grpc-service</module>
+        <module>auto-discovery-example-caller-service</module>
+    </modules>
 
 </project>

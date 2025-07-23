@@ -13,11 +13,11 @@
         <module>rpc-llm-bridge-springboot-starter</module>
         <module>rpc-llm-bridge-testkit</module>
         <module>rpc-llm-bridge-core</module>
+        <module>rpc-llm-bridge-grpc</module>
         <module>example/mcp-example</module>
         <module>example/tooluse-example</module>
         <module>example/example-commons</module>
-        <module>example/tooluse-example/tooluse-example-caller-service</module>
-        <module>rpc-llm-bridge-grpc</module>
+        <module>example/auto-discovery-example</module>
     </modules>
 
     <properties>

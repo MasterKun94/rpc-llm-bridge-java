@@ -14,27 +14,27 @@ import java.util.List;
  * The tool group set is a central component in the tool registry system, serving as
  * a container for organizing related tools into logical groups.
  */
-public interface BridgeToolGroupSet<T extends BridgeToolGroup<?>, C extends BridgeToolChannel> {
+public interface BridgeToolGroupSet<G extends BridgeToolGroup<T, C>, C extends BridgeToolChannel, T extends BridgeTool<?, C>> {
     /**
      * Returns all tool groups in this set.
      *
      * @return A list of all tool groups
      */
-    List<T> getGroups();
+    List<G> getGroups();
 
     /**
      * Adds a new tool group to this set.
      *
      * @param group The tool group to add
      */
-    void addGroup(T group);
+    void addGroup(G group);
 
     /**
      * Updates an existing tool group in this set.
      *
      * @param group The tool group with updated information
      */
-    void updateGroup(T group);
+    void updateGroup(G group);
 
     /**
      * Removes a tool group from this set by name.
@@ -49,7 +49,7 @@ public interface BridgeToolGroupSet<T extends BridgeToolGroup<?>, C extends Brid
      * @param name The name of the tool group to retrieve
      * @return The tool group with the specified name
      */
-    T getGroup(String name);
+    G getGroup(String name);
 
     /**
      * Checks if a tool group with the specified name exists in this set.
@@ -85,4 +85,6 @@ public interface BridgeToolGroupSet<T extends BridgeToolGroup<?>, C extends Brid
      * @throws IOException If an I/O error occurs during discovery
      */
     void reloadByAutoDiscovery(BridgeToolChannelHolder<C> channelHolder) throws IOException;
+
+    BridgeToolRegistration<? extends BridgeToolGroupSet<G, C, T>, C, T> registration();
 }

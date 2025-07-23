@@ -7,9 +7,9 @@ import java.util.Map;
  * This class implements the lazy initialization pattern with double-checked locking to ensure
  * that channels are created only when needed and only once, even in multi-threaded environments.
  */
-public class BridgeToolChannelHolder<T extends BridgeToolChannel> {
+public class BridgeToolChannelHolder<C extends BridgeToolChannel> implements AutoCloseable {
     /** The factory used to create channel instances */
-    private final BridgeToolChannelFactory<T> factory;
+    private final BridgeToolChannelFactory<C> factory;
 
     /** The address of the target service or endpoint */
     private final String targetAddress;
@@ -18,7 +18,7 @@ public class BridgeToolChannelHolder<T extends BridgeToolChannel> {
     private final Map<String, String> channelOptions;
 
     /** The lazily initialized channel instance */
-    private volatile T channel;
+    private volatile C channel;
 
     /**
      * Creates a new channel holder with the specified factory and connection parameters.
@@ -27,7 +27,7 @@ public class BridgeToolChannelHolder<T extends BridgeToolChannel> {
      * @param targetAddress The address of the target service or endpoint
      * @param channelOptions Configuration options for the channel
      */
-    public BridgeToolChannelHolder(BridgeToolChannelFactory<T> factory,
+    public BridgeToolChannelHolder(BridgeToolChannelFactory<C> factory,
                                    String targetAddress,
                                    Map<String, String> channelOptions) {
         this.factory = factory;
@@ -41,7 +41,7 @@ public class BridgeToolChannelHolder<T extends BridgeToolChannel> {
      *
      * @return The channel instance
      */
-    public T get() {
+    public C get() {
         if (channel == null) {
             synchronized (this) {
                 if (channel == null) {
@@ -50,5 +50,12 @@ public class BridgeToolChannelHolder<T extends BridgeToolChannel> {
             }
         }
         return channel;
+    }
+
+    @Override
+    public void close() {
+        if (channel != null) {
+            channel.close();
+        }
     }
 }

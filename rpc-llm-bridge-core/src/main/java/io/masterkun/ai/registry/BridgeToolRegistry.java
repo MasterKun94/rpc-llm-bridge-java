@@ -8,15 +8,25 @@ package io.masterkun.ai.registry;
  * The registry is a key component of the service registration and discovery mechanism,
  * acting as the main entry point for publishing and finding tools in the system.
  */
-public interface BridgeToolRegistry<T extends BridgeToolRegistration<?>> {
+public interface BridgeToolRegistry {
+
     /**
      * Registers a tool registration with this registry, making its tools available
      * for discovery and use by clients.
      *
      * @param registration The tool registration to register
      */
-    void register(T registration);
+    void register(BridgeToolRegistration<?,?,?> registration);
 
+    void registerByAutoDiscovery(BridgeToolRegistration<?,?,?> registration);
+
+    /**
+     * Updates an existing tool registration in the registry with new or modified details.
+     *
+     * @param registration The tool registration to update
+     */
+    void updateRegistration(BridgeToolRegistration<?,?,?> registration);
+    
     /**
      * Unregisters a tool registration from this registry by name, removing its tools
      * from availability.
@@ -34,10 +44,17 @@ public interface BridgeToolRegistry<T extends BridgeToolRegistration<?>> {
     boolean containsRegistration(String name);
 
     /**
-     * Retrieves a registration by name from this registry.
+     * Find registration by name from this registry.
      *
      * @param name The name of the registration to retrieve
      * @return The registration with the specified name
      */
-    T getRegistration(String name);
+    BridgeToolRegistration<?,?,?> getRegistration(String name);
+
+    /**
+     * Get the discovery client from this registry.
+     *
+     * @return An instance of BridgeToolDiscovery, which supports tool discovery functionalities.
+     */
+    BridgeToolDiscovery getDiscovery();
 }
