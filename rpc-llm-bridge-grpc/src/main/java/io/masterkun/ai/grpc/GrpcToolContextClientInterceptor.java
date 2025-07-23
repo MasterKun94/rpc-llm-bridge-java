@@ -33,9 +33,8 @@ public class GrpcToolContextClientInterceptor implements ClientInterceptor {
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
                 if (toolContext != null && toolContext != BridgeToolContext.EMPTY) {
-                    // Serialize the tool context to JSON and add it to the metadata
-                    String contextJson = JSONUtils.toJson(toolContext.getContext());
-                    headers.put(GrpcBridgeToolContext.METADATA_KEY, contextJson);
+                    // Serialize the tool context and add it to the metadata
+                    headers.put(GrpcBridgeToolContext.METADATA_KEY, toolContext);
                 }
                 super.start(responseListener, headers);
             }
