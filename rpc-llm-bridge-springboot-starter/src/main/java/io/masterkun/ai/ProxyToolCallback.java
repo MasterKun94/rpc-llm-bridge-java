@@ -1,6 +1,7 @@
 package io.masterkun.ai;
 
 import io.masterkun.ai.tool.BridgeToolCallback;
+import io.masterkun.ai.tool.BridgeToolContext;
 import io.masterkun.ai.tool.BridgeToolResultConverter;
 import jakarta.annotation.Nonnull;
 import org.springframework.ai.chat.model.ToolContext;
@@ -64,7 +65,7 @@ public class ProxyToolCallback<T> implements ToolCallback {
     @Nonnull
     @Override
     public String call(@Nonnull String toolInput) {
-        return converter.convert(delegate.call(toolInput));
+        return call(toolInput, null);
     }
 
     /**
@@ -72,12 +73,15 @@ public class ProxyToolCallback<T> implements ToolCallback {
      * ignores the tool context and delegates to the simpler call method.
      *
      * @param toolInput  The input string for the tool operation
-     * @param tooContext The tool context (ignored in this implementation)
+     * @param toolContext The tool context
      * @return The converted result as a string
      */
     @Nonnull
     @Override
-    public String call(@Nonnull String toolInput, ToolContext tooContext) {
-        return call(toolInput);
+    public String call(@Nonnull String toolInput, ToolContext toolContext) {
+        BridgeToolContext bridgeToolContext = toolContext == null ?
+                BridgeToolContext.EMPTY :
+                new BridgeToolContext(toolContext.getContext());
+        return converter.convert(delegate.call(toolInput, bridgeToolContext));
     }
 }

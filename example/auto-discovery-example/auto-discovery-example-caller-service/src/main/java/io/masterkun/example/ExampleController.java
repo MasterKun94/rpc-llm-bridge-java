@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.util.Map;
+
 /**
  * 控制器类，提供聊天接口并使用自动发现的工具。
  */
@@ -41,6 +43,7 @@ public class ExampleController {
         response.setCharacterEncoding("UTF-8");
         return chatClient.prompt(query)
                 .toolCallbacks(discovery.findToolCallbacks())
+                .toolContext(Map.of("query", query))
                 .advisors(new SimpleLoggerAdvisor())
                 .stream()
                 .content();

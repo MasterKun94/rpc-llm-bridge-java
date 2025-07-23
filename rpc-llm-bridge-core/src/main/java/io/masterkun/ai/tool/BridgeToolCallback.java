@@ -32,7 +32,8 @@ public interface BridgeToolCallback<T> {
      * according to the tool's functionality and returns a result of type T.
      *
      * @param toolInput The input string for the tool operation
+     * @param toolContext The tool context
      * @return The result of the tool operation
      */
-    T call(String toolInput);
+    T call(String toolInput, BridgeToolContext toolContext);
 }

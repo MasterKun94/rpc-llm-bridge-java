@@ -4,12 +4,16 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.Message;
 import io.grpc.CallOptions;
+import io.grpc.Channel;
+import io.grpc.ClientInterceptors;
 import io.grpc.ManagedChannel;
 import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 import io.masterkun.ai.tool.BridgeToolCallback;
+import io.masterkun.ai.tool.BridgeToolContext;
 import io.masterkun.ai.tool.BridgeToolDefinition;
 import io.masterkun.ai.tool.BridgeToolMetadata;
+import org.checkerframework.checker.units.qual.C;
 
 /**
  * A callback implementation for gRPC bridge tools. This class handles the execution of gRPC method
@@ -100,15 +104,22 @@ public class GrpcBridgeToolCallback<T extends Message> implements BridgeToolCall
      * message and makes a blocking unary call to the gRPC service.
      *
      * @param toolInput The JSON input for the gRPC method
+     * @param toolContext The tool context
      * @return The response from the gRPC service
      */
     @Override
-    public T call(String toolInput) {
+    public T call(String toolInput, BridgeToolContext toolContext) {
         @SuppressWarnings("unchecked")
         var method = (MethodDescriptor<DynamicMessage, T>) definition.getMethod();
         Descriptors.Descriptor descriptor = GrpcUtils.getInputDescriptor(method);
         DynamicMessage.Builder builder = DynamicMessage.newBuilder(descriptor);
         ProtoUtils.fromJson(toolInput, builder);
+        Channel channel = this.channel;
+        if (toolContext != null && toolContext != BridgeToolContext.EMPTY) {
+            // 传递工具调用上下文
+            var interceptor = new GrpcToolContextClientInterceptor(toolContext);
+            channel = ClientInterceptors.intercept(channel, interceptor);
+        }
         return ClientCalls.blockingUnaryCall(channel, method, CallOptions.DEFAULT, builder.build());
     }
 }
