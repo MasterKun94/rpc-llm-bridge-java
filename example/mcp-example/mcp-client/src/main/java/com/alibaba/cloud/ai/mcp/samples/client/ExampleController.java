@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.util.Map;
+
 /**
  * REST controller that provides an endpoint for interacting with an AI model. This controller
  * demonstrates how to use the MCP client to communicate with the AI model and how to configure the
@@ -57,6 +59,7 @@ public class ExampleController {
                 )
                 // Register MCP tool callbacks
                 .defaultToolCallbacks(tools)
+                .defaultToolContext(Map.of("test-context", "context-value"))
                 .build();
     }
 
@@ -73,6 +76,7 @@ public class ExampleController {
         // Set character encoding to avoid garbled text
         response.setCharacterEncoding("UTF-8");
         return chatClient.prompt(query)
+                .toolContext(Map.of("test", "value"))
                 .stream()
                 .content();
     }

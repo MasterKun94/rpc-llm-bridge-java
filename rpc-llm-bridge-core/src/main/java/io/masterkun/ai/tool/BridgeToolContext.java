@@ -15,4 +15,9 @@ public class BridgeToolContext {
     public Map<String, Object> getContext() {
         return context;
     }
+
+    @Override
+    public String toString() {
+        return context.toString();
+    }
 }

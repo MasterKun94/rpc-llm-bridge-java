@@ -1,6 +1,7 @@
 package io.masterkun.example;
 
 import io.grpc.stub.StreamObserver;
+import io.masterkun.ai.grpc.GrpcBridgeToolContext;
 import io.masterkun.toolcall.proto.ExampleProto;
 import io.masterkun.toolcall.proto.ExampleServiceGrpc;
 
@@ -23,6 +24,7 @@ public class ExampleService extends ExampleServiceGrpc.ExampleServiceImplBase {
     @Override
     public void toUpperCase(ExampleProto.ToUpperCaseReq request,
                             StreamObserver<ExampleProto.ToUpperCaseRes> responseObserver) {
+        System.out.println("Received tool context: " + GrpcBridgeToolContext.current());
         responseObserver.onNext(ExampleProto.ToUpperCaseRes.newBuilder()
                 .setMessage(request.getMessage().toUpperCase())
                 .build());
@@ -35,6 +37,7 @@ public class ExampleService extends ExampleServiceGrpc.ExampleServiceImplBase {
     @Override
     public void getTime(ExampleProto.ZonedTimeReq request,
                         StreamObserver<ExampleProto.ZonedTimeRes> responseObserver) {
+        System.out.println("Received tool context: " + GrpcBridgeToolContext.current());
         ZoneId zoneId = ZoneId.of(request.getTimezone());
         ZonedDateTime now = ZonedDateTime.now(zoneId);
         responseObserver.onNext(ExampleProto.ZonedTimeRes.newBuilder()

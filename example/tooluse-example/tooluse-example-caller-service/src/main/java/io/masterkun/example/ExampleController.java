@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.util.Map;
+
 /**
  * REST controller that handles client requests for the tool callback example. Provides endpoints
  * for streaming chat interactions with LLM using tool callbacks.
@@ -41,6 +43,7 @@ public class ExampleController {
         response.setCharacterEncoding("UTF-8");
         return chatClient.prompt(query)
                 .toolCallbacks(provider)
+                .toolContext(Map.of("test", "value"))
                 .advisors(new SimpleLoggerAdvisor())
                 .stream()
                 .content();
