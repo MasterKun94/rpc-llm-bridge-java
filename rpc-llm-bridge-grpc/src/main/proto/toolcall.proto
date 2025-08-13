@@ -24,6 +24,8 @@ extend google.protobuf.FieldOptions {
   // Use this to document the purpose, format, or constraints of a field to help API users
   // understand how to use it correctly.
   optional string field_desc = 14193;
+
+  optional string field_example = 14195;
 }
 
 extend google.protobuf.ServiceOptions {

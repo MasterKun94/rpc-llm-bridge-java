@@ -24,7 +24,9 @@ message ToUpperCaseRes {
 
 // Request message for the getTime operation
 message ZonedTimeReq {
-  string timezone = 1 [(toolcall.field_desc) = "时区编码（例如UTC+8）"];
+  string timezone = 1 [
+    (toolcall.field_desc) = "时区编码" ,
+    (toolcall.field_example) = "UTC+8"];
 }
 
 // Response message for the getTime operation

@@ -149,6 +149,12 @@ public class ProtoUtils {
             fieldNode.put("description", description);
         }
 
+        // Add example if available
+        if (field.getOptions().hasExtension(ToolProto.fieldExample)) {
+            String example = field.getOptions().getExtension(ToolProto.fieldExample);
+            fieldNode.put("example", example);
+        }
+
         // Check if field is required
         if (field.getOptions().hasExtension(ToolProto.fieldRequired) &&
             field.getOptions().getExtension(ToolProto.fieldRequired) && !isOneOf) {
